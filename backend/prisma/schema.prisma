@@ -22,4 +22,18 @@ model User {
   password String
   type     String @default("User")
   status   String @default("active")
+  portfolio Portfolio[]
+  createdAt DateTime ?
+}
+
+model Portfolio {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  reason String
+  description String ?
+  status String @default("pending")
+
+  userId String @db.ObjectId
+  user User @relation(fields: [userId] , references: [id])
+  createdAt DateTime
 }

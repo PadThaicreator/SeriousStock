@@ -3,25 +3,23 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 
-
 const { json } = bodyParser;
 const prisma = new PrismaClient();
 dotenv.config();
 
 export const UserController = {
-  create: async (req, res)   => {
+  create: async (req, res) => {
     try {
-      
       const user = await prisma.user.findFirst({
         where: {
           email: req.body.email,
         },
       });
-      
+
       if (user) {
         return res.status(401).json({ message: "Username already exists" });
       }
-      
+
       await prisma.user.create({
         data: {
           name: req.body.name,
@@ -32,14 +30,14 @@ export const UserController = {
           type: req.body.type,
         },
       });
-      
+
       res.json({ message: "Success" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   },
-  signIn: async (req, res)  => {
-    try {
+  signIn: async (req, res) => {
+    try {console.log("IN")
       const username = req.body.username;
       const password = req.body.password;
       const user = await prisma.user.findFirst({
@@ -49,21 +47,37 @@ export const UserController = {
           status: "active",
         },
       });
-
+      console.log(user)
       if (!user) {
-        return res.status(401).json({ message: "Invalid username or password" });
+        return res
+          .status(403)
+          .json({ message: "Invalid username or password" });
       }
 
-      if (!process.env.SECRET_KEY) {
-        throw new Error("SECRET_KEY is not defined");
-      }
-      const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, { expiresIn: "7d" });
-      res.json({token: token || ""});
+      const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
+        expiresIn: "7d",
+      });
+      res.json({ token: token, user: user });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: error.message });
     }
   },
-  check : async (req  , res ) =>{
+  check: async (req, res) => {
     res.json("In User");
+  },
+  getPort : async (req,res) =>{
+    try {
+      const port = await prisma.user.findFirst({
+        where : {id : req.params.userId},
+        include : {
+          portfolio : true
+        }
+      })
+      res.json(port)
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error.message });
+    }
   }
 };

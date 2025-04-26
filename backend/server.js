@@ -22,9 +22,9 @@ app.get("/check-db-connection", async (req, res) => {
 });
 
 import userRoutes from "./routes/user.route.js";
-
+import portRoutes from "./routes/port.route.js";
 app.use("/user", userRoutes);
-
+app.use("/port", portRoutes);
 app.listen(port, () => {
   console.log(`server is running on port http://localhost:${port}`);
 });

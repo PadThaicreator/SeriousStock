@@ -11,6 +11,7 @@ import { NewsSection } from "./newSection";
 
 
 
+
 interface Symbol {
   displaySymbol: string;
 }
@@ -19,6 +20,7 @@ interface Symbol {
 export default function Page() {
   const [dataQuotes, setDataQuotes] = useState([]);
   const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
     const fetch = async () => {
       try {

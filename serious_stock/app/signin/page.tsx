@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import axios from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -6,8 +6,13 @@ import { useState } from 'react';
 import { config } from '../config';
 import Swal from 'sweetalert2';
 
+
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/userSlice';
+
 export default function Page() {
     const router = useRouter();
+    const dispatch = useDispatch();
     const [ username , setUsername] = useState("");
     const [ password , setPassword] = useState("");
     const handleSave = async () =>{
@@ -18,15 +23,16 @@ export default function Page() {
         }
         const res = await axios.post(`${config.apiBackend}/user/signin` , payload)
         if(res){
+         
           localStorage.setItem("token", res.data.token);
-          router.push("/homepage/home")
+          dispatch(setUser({token : res.data.token ,user : res.data.user}))
           Swal.fire({
                   title: "Successfully",
                   text: "Sign In Success!",
                   icon: "success",
                   timer: 2000,
                 });
-        
+          router.push("/homepage/home")
         }
         } catch (error) {
           Swal.fire({

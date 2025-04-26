@@ -2,10 +2,16 @@
 
 import { TrendingUp, Home, PieChart, BarChart2, LogOut, BookUser, Newspaper } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/userSlice';
 export default function Sidebar() {
     const router = useRouter();
+    const dispatch = useDispatch();
+    const { token, user } = useSelector((state) => state.user);
     const Logout = () =>{
-
+        dispatch(logout())
         router.push("/signin")
     }
   return (
@@ -55,7 +61,7 @@ export default function Sidebar() {
             UN
           </div>
           <div className="flex-1">
-            <div className="font-medium text-amber-900">Username</div>
+            <div className="font-medium text-amber-900">{user.name || 'Guest'}</div>
             
           </div>
           <button className="p-2 rounded-full hover:bg-amber-200 text-amber-700 cursor-pointer" onClick={(e)=>{

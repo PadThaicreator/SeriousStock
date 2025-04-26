@@ -14,11 +14,14 @@ import {
   ChevronUp,
 } from "lucide-react";
 import Modal from "@/utility/modal";
-
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { config } from "@/app/config";
+import Swal from "sweetalert2";
 export default function Page() {
   const [isShow, setShow] = useState(false);
   const [portName, setPortName] = useState("");
-
+  const {  user } = useSelector((state :any) => state.user);
   const [description, setDescription] = useState("");
 
   const reasons = [
@@ -43,16 +46,33 @@ export default function Page() {
     setReseansonPort(reasons[0]);
     setDescription("");
   };
-  const handleSave = () => {
-    const payload = {
-      name: portName,
-      reason: reasonPort,
-      description: description,
-      createdAt: new Date(),
-      status: "waiting for approve",
-    };
-    console.log(payload);
-    handleClose();
+  const handleSave =async () => {
+    try {
+      const payload = {
+        name: portName,
+        reason: reasonPort,
+        description: description,
+       
+        status: "pending",
+        userId : user.id
+      };
+  
+      await axios.post(`${config.apiBackend}/port/create` , payload) 
+      Swal.fire({
+                title: "Sign Up Success!",
+                text: "successfully SignUp",
+                icon: "success",
+                timer: 2000,
+              });
+      handleClose();
+    } catch (error : any) {
+      Swal.fire({
+                title: "Error!",
+                text: error.message,
+                icon: "warning",
+                timer: 2000,
+              });
+    }
   };
   return (
     <div className="flex flex-1 flex-col gap-6 bg-gray-50 p-6">
