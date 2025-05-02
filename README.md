@@ -6,8 +6,8 @@ Stakeholders
 - consultant
 
 function
--admin
- -approve port
+- admin
+  - approve port
   -approve account
   -approve order
 -user
