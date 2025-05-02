@@ -18,7 +18,7 @@ function
   - hire consultant
   - chat with consultant
 - consultant
-  - like user
+  - same user
   - chat with user
   - recommend quote to user
 
