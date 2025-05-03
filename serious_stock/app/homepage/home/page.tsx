@@ -25,7 +25,7 @@ export default function Page() {
     const fetch = async () => {
       try {
         setLoading(true);
-        const res = await fetchApi(config.apigetAllQoute);
+        const res = await fetchApi(`${config.apiBackend}/quote/getall`);
         if (res){
           const sorted = res.sort((a : Symbol, b : Symbol) =>
             a.displaySymbol.localeCompare(b.displaySymbol)
@@ -70,19 +70,20 @@ export default function Page() {
 
 
 const QuoteCard = (prop: any) => {
-  const [quote, setQuote] = useState<any>({});
-  const [quotePrice, setQuotePrice] = useState<any>({});
-  const { quote: originalQuote } = prop;
+ 
+  const [quoteDetail, setQuoteDetail] = useState<any>({});
+  const { quote } = prop;
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await fetchApi(`${config.apilgetQoute}${originalQuote.displaySymbol}${config.apiToken}`);
-        const price = await fetchApi(`${config.apigetPriceQoute}${originalQuote.displaySymbol}${config.apiToken}`);
-        if (res) setQuote(res);
-        if (price) setQuotePrice(price);
+        
+        
+        const price = await fetchApi( `${config.apiBackend}/quote/getDetail/${quote.displaySymbol}`);
+        
+        if (price) setQuoteDetail(price);
       } catch (error) {
         console.log("Error: ", error);
       } finally {
@@ -91,12 +92,13 @@ const QuoteCard = (prop: any) => {
     };
 
     fetchData();
-  }, [originalQuote.displaySymbol]);
+  }, [quote.displaySymbol]);
 
   // Calculate price change percentage
-  const priceChange = quotePrice.c - quotePrice.pc;
-  const changePercentage = quotePrice.pc ? (priceChange / quotePrice.pc) * 100 : 0;
-  const isPositive = priceChange >= 0;
+
+  const isPositive = quoteDetail.regularMarketChangePercent >= 0;
+
+ 
 
   return (
     <div className="border border-gray-200 rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-amber-100 to-amber-200 hover:shadow-xl transition-all duration-300">
@@ -110,7 +112,7 @@ const QuoteCard = (prop: any) => {
             <div className="bg-white p-2 rounded-lg shadow">
               <img
                 src={quote.logo || "/image/noImage.png"}
-                alt={`${originalQuote.displaySymbol} logo`}
+                alt={`${quote.displaySymbol} logo`}
                 className="w-16 h-16 object-contain rounded"
               />
             </div>
@@ -118,22 +120,22 @@ const QuoteCard = (prop: any) => {
           
           <div className="flex flex-col flex-grow">
             <div className="flex items-center justify-between">
-              <h3 className=" font-bold">{originalQuote.displaySymbol}</h3>
-              <span className="text-[0.7rem] font-medium bg-amber-300 px-2 py-1 rounded">{originalQuote.type}</span>
+              <h3 className=" font-bold">{quote.displaySymbol}</h3>
+              <span className="text-[0.7rem] font-medium bg-amber-300 px-2 py-1 rounded">{quote.type}</span>
             </div>
             
-            <p className="text-gray-700 text-sm mt-1">{originalQuote.description || "N/A"}</p>
-            <p className="text-gray-600 text-xs mt-1">{quote.finnhubIndustry || "N/A"}</p>
+            <p className="text-gray-700 text-sm mt-1">{quote.description || "N/A"}</p>
+            <p className="text-gray-600 text-xs mt-1">{quote.industryType || "N/A"}</p>
             
             <div className="mt-3">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 text-sm">Current:</span>
-                <span className="font-bold text-lg">${quotePrice.c?.toFixed(2) || "N/A"}</span>
+                <span className="font-bold text-lg">${quoteDetail.regularMarketPrice?.toFixed(2) || "N/A"}</span>
               </div>
               
               <div className="flex items-center justify-between mt-1">
                 <span className="text-gray-600 text-sm">Open:</span>
-                <span className="font-medium">${quotePrice.o?.toFixed(2) || "N/A"}</span>
+                <span className="font-medium">${quoteDetail.regularMarketOpen?.toFixed(2) || "N/A"}</span>
               </div>
               
               <div className={`flex items-center justify-between mt-2 p-1 rounded ${isPositive ? 'bg-green-100' : 'bg-red-100'}`}>
@@ -144,7 +146,7 @@ const QuoteCard = (prop: any) => {
                     <TrendingDown className="h-4 w-4 text-red-600 mr-1" />
                   )}
                   <span className={`text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                    {priceChange.toFixed(2)} ({changePercentage.toFixed(2)}%)
+                    {quoteDetail.regularMarketChange?.toFixed(2)} ({quoteDetail.regularMarketChangePercent?.toFixed(2)}%)
                   </span>
                 </div>
                 <span className="text-xs text-gray-500">24h</span>

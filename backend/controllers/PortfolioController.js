@@ -40,5 +40,22 @@ export const PortfolioController = {
             res.status(500).json({ error: error.message });
             console.log(error)
           }
+    },
+    getQuote : async (req,res) => {
+      try {
+        
+        const response = await prisma.portfolio.findFirst({
+          where : { id : req.params.portId},
+          include : {
+            QuoteInPort : true,
+            Order : true
+          }
+        })
+
+        res.status(200).json(response)
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+        console.log(error)
+      }
     }
 }

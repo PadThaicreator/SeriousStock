@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TrendingUp,
   TrendingDown,
@@ -18,11 +18,17 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { config } from "@/app/config";
 import Swal from "sweetalert2";
+
+interface itemProps  {
+  id : string,
+  name : string
+}
 export default function Page() {
   const [isShow, setShow] = useState(false);
   const [portName, setPortName] = useState("");
   const {  user } = useSelector((state :any) => state.user);
   const [description, setDescription] = useState("");
+  const [port , setPort] = useState([])
 
   const reasons = [
     "To earn extra income",
@@ -33,6 +39,25 @@ export default function Page() {
     "To learn about investing",
   ];
   const [reasonPort, setReseansonPort] = useState(reasons[0]);
+  const fetchPort = async () =>{
+    try {
+      const res = await axios.get(`${config.apiBackend}/user/port/${user.id}`)
+      if(res)
+        setPort(res.data.portfolio)
+    } catch (error : any) {
+      Swal.fire({
+                              title: "Error!",
+                              text: error.message,
+                              icon: "warning",
+                              timer: 2000,
+                            });
+    }
+  }
+
+  useEffect(()=>{
+    fetchPort();
+  },[])
+
   const handleOpen = () => {
     setShow(true);
   };
@@ -64,6 +89,7 @@ export default function Page() {
                 icon: "success",
                 timer: 2000,
               });
+      fetchPort();
       handleClose();
     } catch (error : any) {
       Swal.fire({
@@ -103,34 +129,17 @@ export default function Page() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
-          <PortDashboard
-            name="Poonnawit1"
+          {port.map((item : itemProps)=>(
+            <PortDashboard key={item.id}
+            name={item.name}
             value={124950}
             change={2.8}
             positive={true}
             stocks={8}
           />
-          <PortDashboard
-            name="Retirement Fund"
-            value={358200}
-            change={0.5}
-            positive={true}
-            stocks={12}
-          />
-          <PortDashboard
-            name="Tech Stocks"
-            value={42630}
-            change={1.2}
-            positive={false}
-            stocks={5}
-          />
-          <PortDashboard
-            name="Dividend Focus"
-            value={84750}
-            change={1.8}
-            positive={true}
-            stocks={9}
-          />
+          ))}
+          
+          
         </div>
       </div>
 
@@ -143,10 +152,11 @@ export default function Page() {
             </h2>
           </div>
           <div className="flex flex-1  px-6 py-4 flex-col gap-4">
-            <PortCard />
-            <PortCard />
-            <PortCard />
-            <PortCard />
+          {port.map((item : itemProps)=>(
+            <PortCard key={item.id}
+            port={item}
+          />
+          ))}
           </div>
         </div>
       </div>
@@ -255,7 +265,8 @@ const PortDashboard = ({ name, value, change, positive, stocks }: any) => {
   );
 };
 
-const PortCard = () => {
+const PortCard = (prop : any) => {
+  const { port } = prop;
   const [showDetail, setShownDetail] = useState(false);
   const handleOpenDetail = () => {
     setShownDetail(true);
@@ -266,8 +277,8 @@ const PortCard = () => {
   return (
     <div className="flex flex-1 flex-col gap-1 hover:shadow-xl hover:duration-400">
       <div className="flex flex-1 border p-4 rounded-lg shadow-md bg-white  justify-between items-center">
-        <div>PortName</div>
-        <div>To save for the future</div>
+        <div>{port.name}</div>
+        <div>{port.reason}</div>
         <div className="flex gap-2 items-center justify-center">
           <TrendingUp />
           <div>2.5%</div>

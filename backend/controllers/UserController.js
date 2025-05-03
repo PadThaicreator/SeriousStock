@@ -37,7 +37,8 @@ export const UserController = {
     }
   },
   signIn: async (req, res) => {
-    try {console.log("IN")
+    try {
+      console.log("IN");
       const username = req.body.username;
       const password = req.body.password;
       const user = await prisma.user.findFirst({
@@ -47,7 +48,7 @@ export const UserController = {
           status: "active",
         },
       });
-      console.log(user)
+      console.log(user);
       if (!user) {
         return res
           .status(403)
@@ -66,15 +67,15 @@ export const UserController = {
   check: async (req, res) => {
     res.json("In User");
   },
-  getPort : async (req,res) =>{
+  getPort: async (req, res) => {
     try {
       const port = await prisma.user.findFirst({
-        where : {id : req.params.userId},
-        include : {
-          portfolio : true
-        }
-      })
-      res.json(port)
+        where: { id: req.params.userId },
+        include: {
+          portfolio: true,
+        },
+      });
+      res.json(port);
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: error.message });

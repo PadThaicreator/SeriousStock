@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
-
 import { PrismaClient } from "@prisma/client";
+
+
 const prisma = new PrismaClient();
 
 const app = express();
@@ -19,12 +20,20 @@ app.get("/check-db-connection", async (req, res) => {
     console.log("Error : ", error.message);
     res.status(500).send({ error: error.message });
   }
-});
+})
+
 
 import userRoutes from "./routes/user.route.js";
 import portRoutes from "./routes/port.route.js";
+import quoteRoutes from "./routes/quote.route.js";
+import orderRoute from "./routes/order.route.js"
+
 app.use("/user", userRoutes);
 app.use("/port", portRoutes);
+app.use("/quote", quoteRoutes);
+app.use("/order", orderRoute);
+
+
 app.listen(port, () => {
   console.log(`server is running on port http://localhost:${port}`);
 });

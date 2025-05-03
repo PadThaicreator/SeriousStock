@@ -5,6 +5,6 @@ const router = Router();
 
 
 router.post('/create', PortfolioController.create);
-
+router.get('/quote/:portId', PortfolioController.getQuote);
 
 export default router;

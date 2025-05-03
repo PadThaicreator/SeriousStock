@@ -6,13 +6,17 @@ import LoadingPage from "@/utility/loading";
 import { fetchApi } from "@/utility/useApi";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Search, TrendingDown, TrendingUp } from "lucide-react";
+import {  Search, TrendingDown, TrendingUp } from "lucide-react";
 import RecommendCard from "./recommend";
+import { useRouter } from "next/navigation";
 
 interface Symbol {
   displaySymbol: string;
   description?: string;
   type?: string;
+  id : string;
+  logo : string;
+  industryType :string;
 }
 
 export default function Page() {
@@ -27,7 +31,7 @@ export default function Page() {
     const fetch = async () => {
       try {
         setLoading(true);
-        const res = await fetchApi(config.apigetAllQoute);
+        const res = await fetchApi(`${config.apiBackend}/quote/getall`);
         if (res) {
           const sorted = res.sort((a: Symbol, b: Symbol) =>
             a.displaySymbol.localeCompare(b.displaySymbol)
@@ -113,7 +117,7 @@ export default function Page() {
 
         <div className="grid grid-cols-1">
   {currentItems.map((item) => (
-    <StockCard key={item.displaySymbol} item={item} />
+    <StockCard key={item.id} item={item} />
   ))}
 </div>
 
@@ -168,22 +172,18 @@ export default function Page() {
 }
 
 const StockCard = ({ item }: { item: Symbol }) => {
-  const [quote, setQuote] = useState<any>({});
-  const [quotePrice, setQuotePrice] = useState<any>({});
+  
+  const [quoteDetail, setQuoteDetail] = useState<any>({});
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await fetchApi(
-          `${config.apilgetQoute}${item.displaySymbol}${config.apiToken}`
-        );
-        const price = await fetchApi(
-          `${config.apigetPriceQoute}${item.displaySymbol}${config.apiToken}`
-        );
-        if (res) setQuote(res);
-        if (price) setQuotePrice(price);
+        
+        const price = await fetchApi(`${config.apiBackend}/quote/getDetail/${item.displaySymbol}`);
+       
+        if (price) setQuoteDetail(price);
       } catch (error) {
         console.log("Error: ", error);
       } finally {
@@ -194,18 +194,18 @@ const StockCard = ({ item }: { item: Symbol }) => {
     fetchData();
   }, [item.displaySymbol]);
 
-  if (loading || !quote || !quotePrice ) {
+  if (loading  || !quoteDetail ||!quoteDetail.regularMarketChangePercent ) {
     return <LoadingPage />;
   }
-  const quotePriceToday = quotePrice.c - quotePrice.pc;
-  const quotePricePercent = (quotePriceToday / quotePrice.pc) * 100 || 0;
-  const isPositive = quotePriceToday >= 0;
+
+
+  const isPositive = quoteDetail.regularMarketChangePercent >= 0;
 
   return (
-    <div className="flex flex-1 m-2 p-2 rounded-lg bg-amber-200 shadow-lg">
+    <div className="flex flex-1 m-2 p-2 rounded-lg bg-amber-200 shadow-lg" onClick={() => router.push(`/homepage/market/${item.displaySymbol}`)}>
       <div className="flex flex-1">
         <Image
-          src={quote.logo || "/image/noImage.png"}
+          src={item.logo || "/image/noImage.png"}
           alt={`${item.displaySymbol} logo`}
           width={64}
           height={64}
@@ -219,7 +219,7 @@ const StockCard = ({ item }: { item: Symbol }) => {
             {item.description || "No description"}
           </div>
         </div>
-        <div className="flex flex-2">{quote.finnhubIndustry || "N/A"}</div>
+        <div className="flex flex-2">{item.industryType || "N/A"}</div>
         <div className="flex flex-1 items-end justify-start flex-col gap-2">
           <div className="bg-white p-2 rounded-lg shadow-md shadow-amber-300 text-amber-600 text-xs">
             {item.type || "N/A"}
@@ -230,7 +230,7 @@ const StockCard = ({ item }: { item: Symbol }) => {
             ) : (
               <TrendingDown className="h-4 w-4 text-red-600 mr-2" />
             )}
-            {quotePricePercent.toFixed(2)}%
+            {quoteDetail.regularMarketChangePercent.toFixed(2) || 0}%
           </div>
         </div>
       </div>

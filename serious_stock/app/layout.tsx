@@ -1,11 +1,13 @@
-'use client'
+"use client";
 
-import { metadata } from './metadata'; 
+import { metadata } from "./metadata";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { Provider } from 'react-redux';
-import store from './redux/store'
+import { Provider } from "react-redux";
+import store, { persistor } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { useEffect, useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,27 +19,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+
+  
   return (
-    <html lang="en">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
-      <link rel="icon" href="/image/signin.JPG" />
-      <title>{metadata.title}</title>
+        <link rel="icon" href="/image/signin.JPG" />
+        <title>{metadata.title}</title>
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="antialiased">
         <Provider store={store}>
-          {children}
+          <PersistGate loading={null} persistor={persistor}>
+            {children}
+          </PersistGate>
         </Provider>
-        
       </body>
     </html>
-  );
+  )
 }

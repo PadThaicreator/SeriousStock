@@ -14,26 +14,78 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  email    String @unique
-  name     String
-  phone    String
-  username String
-  password String
-  type     String @default("User")
-  status   String @default("active")
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  email     String      @unique
+  name      String
+  phone     String
+  username  String
+  password  String
+  type      String      @default("User")
+  status    String      @default("active")
   portfolio Portfolio[]
-  createdAt DateTime ?
+  createdAt DateTime?
 }
 
-model Portfolio {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  reason String
-  description String ?
-  status String @default("pending")
+model Quote {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  type          String
+  description   String
+  displaySymbol String @unique
+  logo          String
+  industryType  String
 
-  userId String @db.ObjectId
-  user User @relation(fields: [userId] , references: [id])
+  Order Order[]
+
+  QuoteInPort QuoteInPort[]
+}
+
+
+model Portfolio {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  reason      String
+  description String?
+  status      String  @default("pending")
+
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime
+
+  Order Order[]
+
+  QuoteInPort QuoteInPort[]
+}
+
+model Order {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  portId String @db.ObjectId
+  portfolio Portfolio @relation(fields: [portId] , references: [id])
+
+  quoteId String @db.ObjectId
+  quote   Quote  @relation(fields: [quoteId], references: [id])
+
+  priceQuote  Float
+  amountQuote Float
+  priceToPay Float
+  createdAt   DateTime
+
+
+  quoteInPortId String @db.ObjectId
+  quoteInPort QuoteInPort @relation(fields: [quoteInPortId] , references: [id])
+}
+
+model QuoteInPort {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  quoteId String @db.ObjectId
+  quote Quote  @relation(fields: [quoteId], references: [id])
+
+  amountQuote Float
+  avgPrice Float
+
+  portId String @db.ObjectId
+  portfolio Portfolio @relation(fields: [portId] , references: [id])
+
+  order Order[]
 }
