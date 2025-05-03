@@ -12,12 +12,14 @@ import {
   Save,
   ChevronDown,
   ChevronUp,
+  Percent,
 } from "lucide-react";
 import Modal from "@/utility/modal";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { config } from "@/app/config";
 import Swal from "sweetalert2";
+import LoadingPage from "@/utility/loading";
 
 interface itemProps  {
   id : string,
@@ -132,10 +134,8 @@ export default function Page() {
           {port.map((item : itemProps)=>(
             <PortDashboard key={item.id}
             name={item.name}
-            value={124950}
-            change={2.8}
-            positive={true}
-            stocks={8}
+            portId = {item.id}
+            
           />
           ))}
           
@@ -207,17 +207,119 @@ export default function Page() {
   );
 }
 
-const PortDashboard = ({ name, value, change, positive, stocks }: any) => {
+interface Quote {
+  id: string;
+  quoteId: string;
+  amountQuote: number;
+  avgPrice: number;
+  portId: string;
+}
+interface Order{
+  priceQuote : number;
+  amountQuote : number;
+  priceToPay : number;
+
+}
+interface PortProps {
+  QuoteInPort: Quote[];
+  Order : Order[];
+}
+
+const PortDashboard = ({ name, portId  }: any) => {
+  const [loading , setLoading] = useState<boolean>(false)
   const [isHovered, setIsHovered] = useState(false);
+  const [port , setPort] = useState<PortProps>();
+  const [quoteCost , setQuoteCost] = useState(0);
+  const [presentPrice , setPresentPrice] = useState(0);
+  const [percent , setPercent] = useState<number>(0);
+  const [quoteDetail , setQuoteDetail] = useState();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("th-TH", {
       style: "currency",
       currency: "THB",
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 2,
     }).format(value);
   };
 
+  const fetchPortData = async()=>{
+    try {
+      
+      const res = await axios.get(`${config.apiBackend}/port/quote/${portId}`)
+      
+
+      if(res){
+        setPort(res.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const calQuoteOrder = async () => {
+    if (!port) return;
+  
+    try {
+      const priceList = await Promise.all(
+        port.Order.map(async (item: Order) => {
+         
+            return item.priceToPay ;
+          
+          
+        })
+      );
+  
+      const totalPrice = priceList.reduce((acc, val) => acc + val, 0);
+      setQuoteCost(totalPrice);
+    } catch (err) {
+      console.error("Error calculating present price:", err);
+    }
+  };
+  
+
+  const calPresentPrice = async () => {
+    if (!port) return;
+  
+    try {
+      const priceList = await Promise.all(
+        port.QuoteInPort.map(async (item: Quote) => {
+          const q = await axios.get(`${config.apiBackend}/quote/getDetailById/${item.quoteId}`);
+          if (q.data) {
+            return item.amountQuote * q.data.postMarketPrice;
+          }
+          return 0;
+        })
+      );
+  
+      const totalPrice = priceList.reduce((acc, val) => acc + val, 0);
+      setPresentPrice(totalPrice);
+    } catch (err) {
+      console.error("Error calculating present price:", err);
+    }
+  };
+
+  useEffect(()=>{
+    setLoading(false)
+    setPercent((quoteCost-presentPrice)/presentPrice*100)
+  },[presentPrice , quoteCost])
+
+  useEffect(()=>{
+    setLoading(true)
+    calPresentPrice();
+    calQuoteOrder();
+    
+    
+  },[port])
+
+  useEffect(()=>{
+    fetchPortData();
+  },[])
+
+  const positive = percent > 0 
+
+  if(loading){
+    return <LoadingPage />
+  }
   return (
     <div
       className={`flex flex-col rounded-xl p-6 shadow-md transition-all duration-300 ${
@@ -242,7 +344,8 @@ const PortDashboard = ({ name, value, change, positive, stocks }: any) => {
       </div>
 
       <div className="text-2xl font-bold text-white mb-2">
-        {formatCurrency(value)}
+        {formatCurrency(presentPrice)} 
+        <p className="text-xs">( {formatCurrency(quoteCost)} )</p>
       </div>
 
       <div className="flex items-center mb-4">
@@ -253,17 +356,14 @@ const PortDashboard = ({ name, value, change, positive, stocks }: any) => {
         )}
         <span className={positive ? "text-green-300" : "text-red-300"}>
           {positive ? "+" : "-"}
-          {Math.abs(change)}%
+          {Math.abs(Number(percent.toFixed(2)))}%
         </span>
       </div>
 
-      <div className="flex justify-between items-center text-white text-sm">
-        <div>Stocks: {stocks}</div>
-        <button className="hover:underline">Details</button>
-      </div>
     </div>
   );
 };
+
 
 const PortCard = (prop : any) => {
   const { port } = prop;

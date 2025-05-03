@@ -4,12 +4,14 @@
 import { config } from "@/app/config";
 import { fetchApi } from "@/utility/useApi";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function RecommendCard(prop: any) {
   const { quote } = prop;
   const [data, setData] = useState<any>({});
   const [price, setPrice] = useState<any>({});
+  const router = useRouter();
   const fetchInfo = async () => {
     const price = await fetchApi(
       `${config.apiBackend}/quote/getDetail/${quote}`
@@ -26,7 +28,7 @@ export default function RecommendCard(prop: any) {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200">
+    <div className="flex flex-col flex-1 cursor-pointer overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200" onClick={() => router.push(`/homepage/market/${quote}`)}>
       {/* Header Section with Gradient */}
       <div className="bg-gradient-to-r from-amber-400 to-amber-600 p-4 h-25">
         <div className="flex items-center justify-between">

@@ -65,4 +65,28 @@ export const QuoteController = {
         .json({ error: "Failed to fetch stock data", message: err.message });
     }
   },
+  getDetailById: async (req, res) => {
+    
+   
+    try {
+
+      const response = await prisma.quote.findFirst({
+        where : {id : req.params.id}
+      })
+
+      if(response){
+        const result = await yahooFinance.quote(response.displaySymbol);
+        res.json(result);
+      }else{
+        res.status(404).json({message : "Quote Not Found"})
+      }
+
+     
+    } catch (err) {
+      console.error("🔥 ERROR:", err);
+      res
+        .status(500)
+        .json({ error: "Failed to fetch stock data", message: err.message });
+    }
+  },
 };

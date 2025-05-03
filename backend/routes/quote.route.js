@@ -6,4 +6,5 @@ router.get('/getall', QuoteController.getAll);
 router.get('/get/:symbol', QuoteController.get);
 router.get('/getDetail/:symbol', QuoteController.getDetail);
 router.get('/getPrice/:symbol', QuoteController.getPrice);
+router.get('/getDetailById/:id' , QuoteController.getDetailById);
 export default router;
