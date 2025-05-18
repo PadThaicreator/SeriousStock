@@ -22,8 +22,11 @@ model User {
   password  String
   type      String      @default("User")
   status    String      @default("active")
+  doc       String?
   portfolio Portfolio[]
+  SellOrder SellOrder[]
   createdAt DateTime?
+
 }
 
 model Quote {
@@ -37,8 +40,8 @@ model Quote {
   Order Order[]
 
   QuoteInPort QuoteInPort[]
+  SellOrder   SellOrder[]
 }
-
 
 model Portfolio {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
@@ -54,38 +57,56 @@ model Portfolio {
   Order Order[]
 
   QuoteInPort QuoteInPort[]
+
+  SellOrder SellOrder[]
 }
 
 model Order {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  portId String @db.ObjectId
-  portfolio Portfolio @relation(fields: [portId] , references: [id])
+  portId    String    @db.ObjectId
+  portfolio Portfolio @relation(fields: [portId], references: [id])
 
   quoteId String @db.ObjectId
   quote   Quote  @relation(fields: [quoteId], references: [id])
 
   priceQuote  Float
   amountQuote Float
-  priceToPay Float
+  priceToPay  Float
   createdAt   DateTime
 
-
-  quoteInPortId String @db.ObjectId
-  quoteInPort QuoteInPort @relation(fields: [quoteInPortId] , references: [id])
+  quoteInPortId String      @db.ObjectId
+  quoteInPort   QuoteInPort @relation(fields: [quoteInPortId], references: [id])
 }
 
 model QuoteInPort {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   quoteId String @db.ObjectId
-  quote Quote  @relation(fields: [quoteId], references: [id])
+  quote   Quote  @relation(fields: [quoteId], references: [id])
 
   amountQuote Float
-  avgPrice Float
+  avgPrice    Float
 
-  portId String @db.ObjectId
-  portfolio Portfolio @relation(fields: [portId] , references: [id])
+  portId    String    @db.ObjectId
+  portfolio Portfolio @relation(fields: [portId], references: [id])
 
   order Order[]
+}
+
+model SellOrder {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  portId    String    @db.ObjectId
+  portfolio Portfolio @relation(fields: [portId], references: [id])
+
+  quoteId String @db.ObjectId
+  quote   Quote  @relation(fields: [quoteId], references: [id])
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  amountSell Float
+  priceSell Float
+  
+  createdAt  DateTime
 }

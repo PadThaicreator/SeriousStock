@@ -20,6 +20,7 @@ import axios from "axios";
 import { config } from "@/app/config";
 import Swal from "sweetalert2";
 import LoadingPage from "@/utility/loading";
+import QuoteCard from "./quotecard";
 
 interface itemProps  {
   id : string,
@@ -232,7 +233,7 @@ const PortDashboard = ({ name, portId  }: any) => {
   const [quoteCost , setQuoteCost] = useState(0);
   const [presentPrice , setPresentPrice] = useState(0);
   const [percent , setPercent] = useState<number>(0);
-  const [quoteDetail , setQuoteDetail] = useState();
+  
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("th-TH", {
@@ -285,7 +286,7 @@ const PortDashboard = ({ name, portId  }: any) => {
         port.QuoteInPort.map(async (item: Quote) => {
           const q = await axios.get(`${config.apiBackend}/quote/getDetailById/${item.quoteId}`);
           if (q.data) {
-            return item.amountQuote * q.data.postMarketPrice;
+            return item.amountQuote * q.data.regularMarketPrice;
           }
           return 0;
         })
@@ -299,12 +300,12 @@ const PortDashboard = ({ name, portId  }: any) => {
   };
 
   useEffect(()=>{
-    setLoading(false)
-    setPercent((quoteCost-presentPrice)/presentPrice*100)
+    
+    setPercent((presentPrice-quoteCost)/quoteCost*100)
   },[presentPrice , quoteCost])
 
   useEffect(()=>{
-    setLoading(true)
+    
     calPresentPrice();
     calQuoteOrder();
     
@@ -317,9 +318,7 @@ const PortDashboard = ({ name, portId  }: any) => {
 
   const positive = percent > 0 
 
-  if(loading){
-    return <LoadingPage />
-  }
+
   return (
     <div
       className={`flex flex-col rounded-xl p-6 shadow-md transition-all duration-300 ${
@@ -367,6 +366,8 @@ const PortDashboard = ({ name, portId  }: any) => {
 
 const PortCard = (prop : any) => {
   const { port } = prop;
+  const [ portData , setPort] = useState<PortProps>();
+  const [ quote , setQuote] = useState();
   const [showDetail, setShownDetail] = useState(false);
   const handleOpenDetail = () => {
     setShownDetail(true);
@@ -374,6 +375,26 @@ const PortCard = (prop : any) => {
   const handleCloseDetail = () => {
     setShownDetail(false);
   };
+
+  const fetchPortData = async()=>{
+    try {
+      
+      const res = await axios.get(`${config.apiBackend}/port/quote/${port.id}`)
+      
+
+      if(res){
+        setPort(res.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(()=>{
+    fetchPortData();
+  },[])
+
+
   return (
     <div className="flex flex-1 flex-col gap-1 hover:shadow-xl hover:duration-400">
       <div className="flex flex-1 border p-4 rounded-lg shadow-md bg-white  justify-between items-center">
@@ -397,6 +418,7 @@ const PortCard = (prop : any) => {
       </div>
       <PortDetail
           handleCloseDetail={handleCloseDetail}
+          port={portData}
           showDetail={showDetail}
         />
     </div>
@@ -404,15 +426,20 @@ const PortCard = (prop : any) => {
 };
 interface PortDetailProps {
   handleCloseDetail: () => void;
-  showDetail: boolean;
+  showDetail: boolean; 
+  port : any;
 }
 const PortDetail = (prop: PortDetailProps) => {
-  const { handleCloseDetail, showDetail } = prop;
+  const { handleCloseDetail, showDetail , port } = prop;
   if (!showDetail) return null;
   return (
-    <div className="flex flex-1 bg-amber-200 p-4 rounded-b-md ">
-      Detail
+    <div className="flex flex-1 bg-amber-200 p-4 rounded-b-md flex-col gap-4">
+      Detail Port
+      {port.QuoteInPort.map((item : any)=>(
+        <QuoteCard key={item.id}  quote={item} port={port}/>
+      ))}
       <button onClick={handleCloseDetail}>Close</button>
     </div>
   );
 };
+

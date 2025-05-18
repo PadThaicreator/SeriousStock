@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/userSlice';
+import LoginPage from '@/utility/login';
 
 export default function Page() {
     const router = useRouter();
@@ -44,12 +45,8 @@ export default function Page() {
         }
     }
   return (
-    <div className="bg-amber-200 h-screen flex items-center justify-center">
-      <div className="bg-white w-3/4 h-3/4 rounded-lg shadow-lg grid grid-cols-2 ">
-        <div className="flex items-center justify-center">
-          <Image src="/image/signin.JPG" alt="SignUp" width={300} height={300} />
-        </div>
-        <div className="flex flex-col justify-center px-8 space-y-4 ">
+    <LoginPage>
+        <div>
           <div>
             <label className="block mb-1 font-semibold">Username</label>
             <input type="text" className="input" placeholder='Enter Username' value={username} onChange={(e)=>setUsername(e.target.value)}/>
@@ -62,10 +59,9 @@ export default function Page() {
             Sign In
           </button>
           <div className='text-center text-sm p-2'>
-            if you don&apos;t have an account ? <span className='ml-2 text-blue-500 cursor-pointer hover:font-semibold' onClick={()=>router.push("/signup")}>SignUp</span>
+            if you don&apos;t have an account ? <span className='ml-2 text-blue-500 cursor-pointer hover:font-semibold' onClick={()=>router.push("/signin/selectType")}>SignUp</span>
           </div>
         </div>
-      </div>
-    </div>
+    </LoginPage>
   );
 }

@@ -17,6 +17,7 @@ const persistedUserReducer = persistReducer(persistConfig, userReducer)
 const store = configureStore({
   reducer: {
     user: persistedUserReducer,  // ใส่อันที่ครอบแล้ว
+    
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

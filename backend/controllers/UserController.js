@@ -28,6 +28,8 @@ export const UserController = {
           email: req.body.email,
           phone: req.body.phone,
           type: req.body.type,
+          doc : req.body.doc || "",
+          createdAt : new Date()
         },
       });
 
@@ -64,9 +66,6 @@ export const UserController = {
       res.status(500).json({ error: error.message });
     }
   },
-  check: async (req, res) => {
-    res.json("In User");
-  },
   getPort: async (req, res) => {
     try {
       const port = await prisma.user.findFirst({
@@ -78,6 +77,15 @@ export const UserController = {
       res.json(port);
     } catch (error) {
       console.log(error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+  getAllUser : async (req,res) =>{
+    try {
+      const users = await prisma.user.findMany();
+      res.json(users);
+    } catch (error) {
+       console.log(error);
       res.status(500).json({ error: error.message });
     }
   }

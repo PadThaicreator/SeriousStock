@@ -1,13 +1,10 @@
-"use client";
+// NO "use client" here!
 
-import { metadata } from "./metadata";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { Provider } from "react-redux";
-import store, { persistor } from "./redux/store";
-import { PersistGate } from "redux-persist/integration/react";
-import { useEffect, useState } from "react";
+import ReduxProvider from "./redux/provider"; // new wrapper component
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,28 +16,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata = {
+  title: "Your App Title", // if not already defined in a separate file
+};
+
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-
-
-
-  
+}) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <head>
-        <link rel="icon" href="/image/signin.JPG" />
-        <title>{metadata.title}</title>
-      </head>
       <body className="antialiased">
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            {children}
-          </PersistGate>
-        </Provider>
+        <ReduxProvider>
+          {children}
+        </ReduxProvider>
       </body>
     </html>
-  )
+  );
 }

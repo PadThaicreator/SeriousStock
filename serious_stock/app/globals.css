@@ -9,9 +9,17 @@
 }
 
 .btn {
-  @apply flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg transition-colors;
+  @apply flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg transition-colors cursor-pointer hover:shadow-lg;
 }
 
 .day-select{
   @apply bg-white shadow-lg rounded-lg 
+}
+
+.btn-cancel{
+  @apply flex items-center gap-2 text-amber-600 border py-2 px-4 rounded-lg transition-colors cursor-pointer  hover:shadow-lg shadow-amber-400;
+}
+
+.card-profile{
+  @apply flex flex-1 bg-amber-200 p-4 rounded-lg shadow-lg
 }

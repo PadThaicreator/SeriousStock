@@ -30,17 +30,15 @@ export default function Buy(prop: any) {
 
   const fetchData = async () => {
     try {
-        
       const detail = await axios.get(
         `${config.apiBackend}/quote/get/${quote.symbol}`
       );
       const port = await axios.get(`${config.apiBackend}/user/port/${user.id}`);
-      if ( port) {
-        
+      if (port) {
         setPort(port.data?.portfolio);
       }
 
-      if(detail){
+      if (detail) {
         setQuoteId(detail.data?.id);
       }
     } catch (error: any) {
@@ -60,45 +58,47 @@ export default function Buy(prop: any) {
 
   useEffect(() => {
     setPortId(port[0]?.id);
-    setPriceQuote(quote.regularMarketPrice)
-    setPriceToPay(quote.regularMarketPrice)
-    
-  }, [port , quote , quoteId]);
+    setPriceQuote(quote.regularMarketPrice);
+    setPriceToPay(quote.regularMarketPrice);
+  }, [port, quote, quoteId]);
 
-  const handleSave = async () =>{
+  const handleSave = async () => {
     try {
-        const payload = {
-            portId : portId,
-            quoteId : quoteId,
-            priceQuote : priceQuote,
-            amountQuote : amountQuote,
-            priceToPay : priceToPay,
-        }
-        const res = await axios.post(`${config.apiBackend}/order/create` , payload);
-        console.log(res);
-        handleClose();
-        Swal.fire({
-                  title: "Buy Success!",
-                  text: "successfully ",
-                  icon: "success",
-                  timer: 2000,
-                });
-    } catch (error : any) {
-        Swal.fire({
-            title: "Error!",
-            text: error.message,
-            icon: "warning",
-            timer: 2000,
-          });
+      const payload = {
+        portId: portId,
+        quoteId: quoteId,
+        priceQuote: priceQuote,
+        amountQuote: amountQuote,
+        priceToPay: priceToPay,
+      };
+      const res = await axios.post(
+        `${config.apiBackend}/order/create`,
+        payload
+      );
+      console.log(res);
+      handleClose();
+      Swal.fire({
+        title: "Buy Success!",
+        text: "successfully ",
+        icon: "success",
+        timer: 2000,
+      });
+    } catch (error: any) {
+      Swal.fire({
+        title: "Error!",
+        text: error.message,
+        icon: "warning",
+        timer: 2000,
+      });
     }
-  }
+  };
 
-  const clearForm = () =>{
+  const clearForm = () => {
     setPortId(port[0]?.id);
-    setPriceQuote(quote.regularMarketPrice)
-    setPriceToPay(quote.regularMarketPrice)
-    setAmountQuote(1)
-  }
+    setPriceQuote(quote.regularMarketPrice);
+    setPriceToPay(quote.regularMarketPrice);
+    setAmountQuote(1);
+  };
   return (
     <div>
       <div
@@ -111,7 +111,7 @@ export default function Buy(prop: any) {
         <div>
           <div>
             <p>Choose Your Portfolio</p>
-            
+
             <select
               value={portId || 0}
               onChange={(e) => setPortId(e.target.value)}
@@ -126,22 +126,31 @@ export default function Buy(prop: any) {
           </div>
           <div>
             <p>Quote Price</p>
-            <input type="text" value={priceQuote} disabled className="input"/>
+            <input type="text" value={priceQuote} disabled className="input" />
           </div>
           <div>
             <p>Quote Amount</p>
-            <input type="number" className="input" value={amountQuote} onChange={(e)=>{
-                setAmountQuote(Number(e.target.value))
-                setPriceToPay(Number(e.target.value)*priceQuote)
-                }}/>
+            <input
+              type="number"
+              className="input"
+              value={amountQuote}
+              onChange={(e) => {
+                setAmountQuote(Number(e.target.value));
+                setPriceToPay(Number(e.target.value) * priceQuote);
+              }}
+            />
           </div>
           <div>
             <p>Price To Pay</p>
-            <input type="number" className="input" value={priceToPay} onChange={(e)=>{
-                setPriceToPay(Number(e.target.value))
-                setAmountQuote(Number(e.target.value)/priceQuote)
-                
-                }}/>
+            <input
+              type="number"
+              className="input"
+              value={priceToPay}
+              onChange={(e) => {
+                setPriceToPay(Number(e.target.value));
+                setAmountQuote(Number(e.target.value) / priceQuote);
+              }}
+            />
           </div>
           <div className="mt-2" onClick={handleSave}>
             <button className="btn">Confirm</button>

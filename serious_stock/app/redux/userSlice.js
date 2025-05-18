@@ -6,6 +6,7 @@ const userSlice = createSlice({
   initialState: {
     token: '',  // เก็บ token
     user: {},   // user เป็น object ที่ยืดหยุ่น
+    sign : {}
   },
   reducers: {
     setUser: (state, action) => {
@@ -16,8 +17,12 @@ const userSlice = createSlice({
       state.token = '';                    // ลบ token
       state.user = {};                     // ลบข้อมูล user
     },
+    signUp : (state , action) =>{
+      state.sign = action.payload;
+
+    }
   },
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser, logout , signUp } = userSlice.actions;
 export default userSlice.reducer;
