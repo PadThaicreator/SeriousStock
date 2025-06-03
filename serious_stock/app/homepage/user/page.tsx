@@ -1,9 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { config } from "@/app/config";
 import axios from "axios";
-import { Camera } from "lucide-react";
+import { Camera, UserPen } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../redux/userSlice"; // เปลี่ยน path ตามจริง
+
+import { Cloudinary } from "@cloudinary/url-gen";
+import Swal from "sweetalert2";
 
 export default function Page() {
   const user = useSelector((state: any) => state.user.user);
@@ -14,21 +21,23 @@ export default function Page() {
   const [username, setUsername] = useState<string>(user.username);
   const [phone, setPhone] = useState<string>(user.phone);
   const [email, setEmail] = useState<string>(user.email);
-  const [selectedProvince, setSelectedProvince] = useState<string>("");
-  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
-  const [selectedSubDistrict, setSelectedSubDistrict] = useState<string>("");
-  
+  const [selectedProvince, setSelectedProvince] = useState<string>(
+    user.address?.province || ""
+  );
+  const [selectedDistrict, setSelectedDistrict] = useState<string>(
+    user.address?.district || ""
+  );
+  const [selectedSubDistrict, setSelectedSubDistrict] = useState<string>(
+    user.address?.subDistrict || ""
+  );
+  const [detail, setDetail] = useState<string>(user.address?.detail || "");
+
   const [provinceData, setProvinceData] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
   const [subDistricts, setSubDistricts] = useState<any[]>([]);
-  const [zipCode, setZipCode] = useState<string>("");
-
-
-
-
-
-
-
+  const [zipCode, setZipCode] = useState<string>(user.address?.postCode || "");
+  const [saveing, setSaving] = useState<boolean>(false);
+  const dispatch = useDispatch();
   useEffect(() => {
     axios
       .get(
@@ -36,7 +45,42 @@ export default function Page() {
       )
       .then((res) => setProvinceData(res.data))
       .catch((err) => console.error("Error fetching provinces", err));
+
+    if (user.profile) {
+      const cld = new Cloudinary({ cloud: { cloudName: "dlsd9groz" } });
+      const img = cld.image(user.profile);
+      const imgUrl = img.toURL() + `?t=${Date.now()}`; // ทำให้ URL มันไม่ทับกัน
+      setPreviewUrl(imgUrl);
+    }
   }, []);
+
+  useEffect(() => {
+    if (
+      provinceData &&
+      selectedProvince &&
+      selectedDistrict &&
+      selectedSubDistrict
+    ) {
+      const province = provinceData.find((p) => p.name_en === selectedProvince);
+      if (!province) return;
+
+      const loadedDistricts = province.amphure || [];
+      setDistricts(loadedDistricts);
+
+      const district = loadedDistricts.find(
+        (d) => d.name_en === selectedDistrict
+      );
+      const loadedSubDistricts = district?.tambon || [];
+      setSubDistricts(loadedSubDistricts);
+
+      const sub = loadedSubDistricts.find(
+        (s) => s.name_en === selectedSubDistrict
+      );
+      if (sub) {
+        setZipCode(sub.zip_code);
+      }
+    }
+  }, [provinceData, selectedProvince, selectedDistrict, selectedSubDistrict]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -46,200 +90,268 @@ export default function Page() {
     }
   };
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
     if (!isEdit) {
       setIsEdit(true);
       return;
     }
+    console.log("Saving profile changes...");
+    const formData = new FormData();
+    if (file) {
+      formData.append("file", file);
+    }
+
+    console.log("Saving profile changes...");
+    formData.append("userId", user.id);
+    formData.append("name", name);
+    formData.append("username", username);
+    formData.append("phone", phone);
+    formData.append("email", email);
+    formData.append("province", selectedProvince);
+    formData.append("district", selectedDistrict);
+    formData.append("subDistrict", selectedSubDistrict);
+    formData.append("zipCode", zipCode);
+    formData.append("detail", detail);
+    console.log("Saving profile changes...");
+    try {
+      setSaving(true);
+      await axios.put(`${config.apiBackend}/user/update`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      dispatch(
+        updateUser({
+          ...user,
+          name,
+          username,
+          phone,
+          email,
+          address: {
+            province: selectedProvince,
+            district: selectedDistrict,
+            subDistrict: selectedSubDistrict,
+            detail,
+            postCode: zipCode,
+          },
+          profile: user.profile,
+        })
+      );
+
+      console.log("Saving profile changes...");
+      setIsEdit(false);
+      Swal.fire({
+        title: "Profile Updated",
+        text: "Your profile has been updated successfully.",
+        icon: "success",
+        timer: 2000,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
-    <div className="flex  flex-col flex-1 items-center">
-      <div className="flex  flex-col bg-amber-50 p-4 rounded-lg gap-4 w-200  ">
-        <div className=" justify-between flex">
-          <p className="bg-amber-300 p-2  text-2xl font-semibold rounded-lg px-6 shadow-lg">
-            Profile
-          </p>
-          <div className="flex gap-2">
-            {isEdit && (
-              <button className="btn !px-8" onClick={() => setIsEdit(false)}>
-                Cancel
-              </button>
-            )}
-            <button className="btn !px-8" onClick={handleEdit}>
-              {isEdit ? "Save" : "Edit"}
-            </button>
+    <div className="flex   flex-col flex-1  bg-amber-50 p-4 rounded-lg gap-4   ">
+      <div className=" justify-between flex bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 p-4 shadow-2xl rounded-lg ">
+        <div className=" text-2xl text-white px-6 flex items-center gap-4">
+          <UserPen size={64} className=" rounded-full p-1 "/>
+          <div>
+            <div className="font-semibold">Your Profile </div>
+            <div className="text-lg">create your best profile</div>
           </div>
         </div>
-        <div className="card-profile items-center gap-10">
-          <div className="grid grid-cols-4 gap-20 ">
-            <div className="flex flex-1  w-50">
-              <div className=" flex w-50 h-50 rounded-full bg-white overflow-hidden">
-                <Image
-                  src={previewUrl || "/image/noImage.png"}
-                  alt="Profile Image"
-                  width={150}
-                  height={150}
-                  className="w-full h-full object-cover"
-                />
-                {isEdit && (
-                  <label className="absolute   bg-amber-500 rounded-full p-4 shadow-md cursor-pointer hover:bg-amber-600 transition-colors">
-                    <Camera size={20} className="text-white" />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </label>
-                )}
-              </div>
+        <div className="flex gap-2">
+          {isEdit && (
+            <button className="btn-edit " onClick={() => setIsEdit(false)}>
+              Cancel
+            </button>
+          )}
+          <button className="btn-edit " onClick={handleEdit}>
+            {isEdit ? "Save" : "Edit Your Profile"}
+          </button>
+        </div>
+      </div>
+      <div className="card-profile items-center gap-10">
+        <div className="grid grid-cols-4 gap-20 ">
+          <div className="flex flex-1  w-50">
+            <div className=" flex w-50 h-50 rounded-full bg-white overflow-hidden">
+              <Image
+                src={previewUrl || "/image/noImage.png"}
+                alt="Profile Image"
+                width={150}
+                height={150}
+                className="w-full h-full object-cover"
+              />
+
+              {isEdit && (
+                <label className="absolute   bg-amber-500 rounded-full p-4 shadow-md cursor-pointer hover:bg-amber-600 transition-colors">
+                  <Camera size={20} className="text-white" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </label>
+              )}
             </div>
-            <div className="grid grid-cols-4 gap-4 col-span-3 ">
-              <div className="flex flex-col bg-white p-2 rounded-lg shadow-lg col-span-2">
-                <p>Name</p>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                  }}
-                  className="input"
-                  disabled={!isEdit}
-                />
-              </div>
-              <div className="flex flex-col bg-white p-2 rounded-lg shadow-lg col-span-2">
-                <p>Username</p>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                  }}
-                  className="input"
-                  disabled={!isEdit}
-                />
-              </div>
-              <div className=" col-span-4 p-4  flex flex-col bg-white  rounded-lg shadow-lg">
-                Address
-                <div className="grid grid-cols-1 gap-4">
-                 
-                  <div>
-                    <p>Province</p>
-                    <select
-                      disabled={!isEdit}
-                      className="input"
-                      value={selectedProvince}
-                      onChange={(e) => {
-                        const code = e.target.value;
-                        setSelectedProvince(code);
-                        const prov = provinceData.find((p) => p.name_en === code);
-                        setDistricts(prov?.amphure || []);
-                        setSelectedDistrict("");
-                        setSubDistricts([]);
-                        setSelectedSubDistrict("");
-                        setZipCode("");
-                      }}
-                    >
-                      <option value="">-- Select Province --</option>
-                      {provinceData.map((prov) => (
-                        <option key={prov.name_en} value={prov.name_en}>
-                          {prov.name_en}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+          </div>
+          <div className="grid grid-cols-4 gap-4 col-span-3 ">
+            <div className="flex flex-col bg-white p-2 rounded-lg shadow-lg col-span-2">
+              <p>Name</p>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+                className="input"
+                disabled={!isEdit}
+              />
+            </div>
+            <div className="flex flex-col bg-white p-2 rounded-lg shadow-lg col-span-2">
+              <p>Username</p>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+                className="input"
+                disabled={!isEdit}
+              />
+            </div>
+            <div className=" col-span-4 p-4  flex flex-col bg-white  rounded-lg shadow-lg">
+              Address
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <p>Province</p>
+                  <select
+                    disabled={!isEdit}
+                    className="input"
+                    value={selectedProvince}
+                    onChange={(e) => {
+                      const code = e.target.value;
 
-                 
-                  <div>
-                    <p>District</p>
-                    <select
-                      disabled={!isEdit || !selectedProvince}
-                      className="input"
-                      value={selectedDistrict}
-                      onChange={(e) => {
-                        const code = e.target.value;
-                        setSelectedDistrict(code);
-                        const dist = districts.find((d) => d.name_en === code);
-                        setSubDistricts(dist?.tambon || []);
-                        setSelectedSubDistrict("");
-                        setZipCode("");
-                      }}
-                    >
-                      <option value="">-- Select District --</option>
-                      {districts.map((dist) => (
-                        <option key={dist.name_en} value={dist.name_en}>
-                          {dist.name_en}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      setSelectedProvince(code);
+                      const prov = provinceData.find((p) => p.name_en === code);
 
-                 
-                  <div>
-                    <p>Sub District</p>
-                    <select
-                      disabled={!isEdit || !selectedDistrict}
-                      className="input"
-                      value={selectedSubDistrict}
-                      onChange={(e) => {
-                        const code = e.target.value;
-                        setSelectedSubDistrict(code);
-                        const sub = subDistricts.find((s) => s.name_en === code);
-                        setZipCode(sub?.zip_code || "");
-                      }}
-                    >
-                      <option value="">-- Select Sub District --</option>
-                      {subDistricts.map((sub) => (
-                        <option key={sub.name_en} value={sub.name_en}>
-                          {sub.name_en}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      setDistricts(prov?.amphure || []);
+                      setSelectedDistrict("");
+                      setSubDistricts([]);
+                      setSelectedSubDistrict("");
+                      setZipCode("");
+                    }}
+                  >
+                    <option value="">-- Select Province --</option>
+                    {provinceData.map((prov) => (
+                      <option key={prov.name_en} value={prov.name_en}>
+                        {prov.name_en}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  
-                  <div>
-                    <p>PostCode</p>
-                    <input
-                      type="text"
-                      className="input"
-                      disabled
-                      value={zipCode}
-                    />
-                  </div>
+                <div>
+                  <p>District</p>
+                  <select
+                    disabled={!isEdit || !selectedProvince}
+                    className="input"
+                    value={selectedDistrict}
+                    onChange={(e) => {
+                      const code = e.target.value;
+                      setSelectedDistrict(code);
+                      const dist = districts.find((d) => d.name_en === code);
+                      setSubDistricts(dist?.tambon || []);
+                      setSelectedSubDistrict("");
+                      setZipCode("");
+                    }}
+                  >
+                    <option value="">-- Select District --</option>
+                    {districts.map((dist) => (
+                      <option key={dist.name_en} value={dist.name_en}>
+                        {dist.name_en}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <p>Sub District</p>
+                  <select
+                    disabled={!isEdit || !selectedDistrict}
+                    className="input"
+                    value={selectedSubDistrict}
+                    onChange={(e) => {
+                      const code = e.target.value;
+                      setSelectedSubDistrict(code);
+                      const sub = subDistricts.find((s) => s.name_en === code);
+                      setZipCode(sub?.zip_code || "");
+                    }}
+                  >
+                    <option value="">-- Select Sub District --</option>
+                    {subDistricts.map((sub) => (
+                      <option key={sub.name_en} value={sub.name_en}>
+                        {sub.name_en}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <p>PostCode</p>
+                  <input
+                    type="text"
+                    className="input"
+                    disabled
+                    value={zipCode}
+                  />
+                </div>
+                <div>
+                  <p>Detail</p>
+                  <input
+                    type="text"
+                    className="input"
+                    value={detail}
+                    disabled={!isEdit}
+                    onChange={(e) => {
+                      setDetail(e.target.value);
+                    }}
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="card-profile">
-          <div>
-            <p className="font">Phone Number</p>
-            <input
-              type="text"
-              value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-              }}
-              className="input bg-white"
-              disabled={!isEdit}
-            />
-          </div>
+      </div>
+      <div className="card-profile gap-10">
+        <div>
+          <p className="font">Phone Number</p>
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => {
+              setPhone(e.target.value);
+            }}
+            className="input bg-white"
+            disabled={!isEdit}
+          />
         </div>
-        <div className="card-profile">
-          <div>
-            <p className="font">Email</p>
-            <input
-              type="text"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              className="input bg-white"
-              disabled={!isEdit}
-            />
-          </div>
+        <div>
+          <p className="font">Email</p>
+          <input
+            type="text"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            className="input bg-white"
+            disabled={!isEdit}
+          />
         </div>
       </div>
     </div>

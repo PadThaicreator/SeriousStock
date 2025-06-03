@@ -47,7 +47,11 @@ export const PortfolioController = {
         const response = await prisma.portfolio.findFirst({
           where : { id : req.params.portId},
           include : {
-            QuoteInPort : true,
+            QuoteInPort : {
+              include : {
+                quote : true
+              }
+            },
             Order : true
           }
         })

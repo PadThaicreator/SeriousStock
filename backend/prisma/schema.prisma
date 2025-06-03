@@ -23,10 +23,29 @@ model User {
   type      String      @default("User")
   status    String      @default("active")
   doc       String?
+  profile   String?
   portfolio Portfolio[]
   SellOrder SellOrder[]
-  createdAt DateTime?
+  address Address?
 
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  
+}
+
+model Address {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  province    String
+  district    String
+  subDistrict String
+  postCode    String
+  detail      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Quote {
@@ -106,7 +125,15 @@ model SellOrder {
   user   User   @relation(fields: [userId], references: [id])
 
   amountSell Float
-  priceSell Float
-  
-  createdAt  DateTime
+  priceSell  Float
+
+  createdAt DateTime
+}
+
+model Message {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  senderId   String
+  receiverId String
+  content    String
+  createdAt  DateTime @default(now())
 }

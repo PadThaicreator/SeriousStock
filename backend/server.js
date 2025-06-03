@@ -1,6 +1,12 @@
 import express from "express";
+
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
+
+
+import initSocket from './socket/index.js';
+import http from "http";
+import { Server } from "socket.io";
 
 
 const prisma = new PrismaClient();
@@ -48,9 +54,19 @@ app.use("/upload" , fileRoute);
 
 
 
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 
 
-app.listen(port, () => {
+initSocket(io);
+
+
+server.listen(port, () => {
   console.log(`server is running on port http://localhost:${port}`);
 });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { TrendingUp, Home, PieChart, BarChart2, LogOut, BookUser, Newspaper } from 'lucide-react';
@@ -6,14 +7,35 @@ import { useSelector } from 'react-redux';
 
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/userSlice';
+import { useEffect, useState } from 'react';
+import { Cloudinary } from '@cloudinary/url-gen/index';
+import Image from 'next/image';
+
 export default function Sidebar() {
     const router = useRouter();
     const dispatch = useDispatch();
-    const { token, user } = useSelector((state) => state.user);
+    const  user  = useSelector((state : any) => state?.user?.user);
+    const [url, setUrl] = useState<string>("");
     const Logout = () =>{
-        dispatch(logout())
+        
         router.push("/signin")
+        dispatch(logout())
     }
+
+    useEffect(() => {
+    if (user.profile) {
+      const cld = new Cloudinary({ cloud: { cloudName: "dlsd9groz" } });
+      const img = cld.image(user?.profile);
+      const imgUrl = img.toURL() + `?t=${Date.now()}`;
+      if(user)
+        console.log(user)
+        setUrl(imgUrl);
+    }
+  }, [user]);
+
+
+  
+        
   return (
     <div className="flex flex-1 h-screen top-0 sticky bg-gradient-to-b from-amber-100 to-amber-200 flex-col shadow-lg">
       {/* Logo and Header */}
@@ -55,10 +77,16 @@ export default function Sidebar() {
       </div>
       
       {/* User Profile */}
-      <div className="absolute bottom-0 mb-10 p-2 w-full cursor-pointer" onClick={()=>router.push("/homepage/user")}>
-        <div className="bg-white bg-opacity-80 flex items-center p-3 rounded-lg shadow-sm border border-amber-300">
-          <div className="bg-amber-500 text-white p-3 rounded-full mr-4 flex items-center justify-center font-bold">
-            UN
+      <div className="flex  bottom-0 mb-10 p-2 w-full cursor-pointer" onClick={()=>router.push("/homepage/user")}>
+        <div className="bg-white bg-opacity-80 flex items-center p-3 rounded-lg shadow-sm border border-amber-300 gap-4">
+          <div className="bg-amber-500 text-white rounded-full   w-15 h-15 items-center justify-center font-bold outline-3 outline-amber-300 overflow-hidden relative">
+            <Image 
+              src={url || "/image/noImage.png"}
+              alt="User Profile"
+              width={150}
+              height={150}
+              className="rounded-full object-cover w-full h-full"
+            />
           </div>
           <div className="flex-1">
             <div className="font-medium text-amber-900">{user.name || 'Guest'}</div>

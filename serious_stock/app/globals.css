@@ -23,3 +23,18 @@
 .card-profile{
   @apply flex flex-1 bg-amber-200 p-4 rounded-lg shadow-lg
 }
+
+.btn-edit {
+  @apply flex items-center gap-2 
+    bg-white text-amber-500 
+    hover:bg-amber-500 hover:text-white 
+    text-base font-semibold 
+    px-6 py-2 rounded-xl 
+    transition-all duration-300 
+    cursor-pointer shadow 
+    hover:shadow-lg;
+}
+
+.card-consult-detail {
+  @apply flex flex-1  p-4 rounded-lg   bg-white  hover:shadow-xl duration-300
+}
