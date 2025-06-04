@@ -7,10 +7,10 @@ Stakeholders
 
 function
 - system. //coming soon
-  - print receipt 
-  - pay by stripe 
+  - print receipt (dont have)
+  - pay by stripe  (dont have)
   - upload file to cloudinary
-- admin
+- admin (dont have)
   - approve consultant
   - approve port
   - approve account
@@ -18,9 +18,9 @@ function
 - user
   - see quote news
   - buy sell quote
-  - compare quote. //optional
+  - compare quote. (dont have)
   - open port
-  - hire consultant
+  - request consultant
   - chat with consultant
   - set profile
 - consultant
