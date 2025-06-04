@@ -13,7 +13,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     socket.emit('join', { userId: senderId });
-
+    
     socket.on('private-message', ({ senderId, message }) => {
         console.log(`Message from ${senderId}: ${message}`);
       setMessages(prev => [...prev, { senderId, content: message }]);

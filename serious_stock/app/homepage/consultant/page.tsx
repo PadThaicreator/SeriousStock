@@ -6,8 +6,10 @@ import { Cloudinary } from "@cloudinary/url-gen/index";
 import axios from "axios";
 import { use, useEffect, useState } from "react";
 import Image from "next/image";
-import { Divide, Mail, Phone } from "lucide-react";
+import { ArrowDown, ArrowUp, Divide, Mail, Phone, TrendingUp } from "lucide-react";
 import LoadingPage from "@/utility/loading";
+import socket from "@/utility/socket";
+import { useSelector } from "react-redux";
 
 export default function Page() {
   const [consult, setConsult] = useState([]);
@@ -15,11 +17,15 @@ export default function Page() {
   const [detail, setDetail] = useState<any>();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [isRequestSent, setIsRequestSent] = useState();
+  const  user  = useSelector((state : any) => state?.user?.user);
   const fetchConsultant = async () => {
     try {
       setLoading(true);
       const res = await axios.get(`${config.apiBackend}/user/getConsult`);
+      
       setConsult(res.data);
+      
     } catch (error) {
       console.error("Error fetching consultant data:", error);
     } finally {
@@ -32,6 +38,10 @@ export default function Page() {
       const res = await axios.get(
         `${config.apiBackend}/user/port/${selectedConsultant}`
       );
+      const reqfri = await axios.get(`${config.apiBackend}/friend/status/${user.id}/${selectedConsultant}`);
+      if(reqfri)
+        setIsRequestSent(reqfri.data);
+
       setDetail(res.data);
     } catch (error) {
       console.error("Error fetching consultant data:", error);
@@ -59,9 +69,27 @@ export default function Page() {
     console.log("Selected Consultant ID:", selectedConsultant);
   }, [selectedConsultant]);
 
+ 
+
+
+
   if (loading) {
     return <LoadingPage />;
   }
+
+ 
+
+  const handleRequest = () => {
+    socket.emit("send-friend-request", {
+      senderId: user.id,
+      receiverId: selectedConsultant,
+    });
+    fetchConDetail();
+  
+  };
+
+
+
   return (
     <div className="flex flex-1 bg-white flex-col gap-5 p-4">
       <div className="flex flex-col  p-2 gap-2">
@@ -126,9 +154,12 @@ export default function Page() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-1  items-end  flex-col">
+            <div className="flex flex-1  items-end  flex-col gap-2">
               <div className="hover:bg-green-400 hover:text-black  bg-green-300 p-1 px-3 rounded-2xl text-gray-600">
                 {detail?.status}
+              </div>
+              <div className={`${user.id === selectedConsultant ? "hidden" : ""} flex items-center bg-amber-300 py-1 px-3 rounded-lg shadow-lg text-white hover:bg-amber-500  transition-colors duration-200 cursor-pointer`} onClick={handleRequest}>
+                {isRequestSent?.status || "Send Request"}
               </div>
             </div>
           </div>
@@ -216,9 +247,7 @@ const PortCard = (prop: any) => {
 
   return (
     <div className=" flex flex-col p-6  rounded-lg shadow-lg hover:shadow-amber-200  bg-white  transition-colors duration-200 cursor-pointer border-t-4 border-amber-300 gap-2">
-      <div className="">
-        {port?.name}
-      </div>
+      <div className="">{port?.name}</div>
       {quote?.QuoteInPort && quote?.QuoteInPort?.length > 0 ? (
         <div className="flex gap-2 flex-col">
           {quote.QuoteInPort.map((item: any, index: number) => (
@@ -233,42 +262,64 @@ const PortCard = (prop: any) => {
 };
 
 const QuoteCard = (prop: any) => {
-  const { quote , order } = prop;
-  const [allOrderPrice , setOrderPrice] = useState<number>(0);
-  const [ presentPrice , setPresentPrice] = useState<number>(0);
+  const { quote, order } = prop;
+  const [allOrderPrice, setOrderPrice] = useState<number>(0);
+  const [presentPrice, setPresentPrice] = useState<number>(0);
+  const [changePrice, setChangePrice] = useState<number>(0);
 
-  const fetchPrice = async () =>{
+  const fetchPrice = async () => {
     try {
-      const res = await axios.get(`${config.apiBackend}/quote/getDetail/${quote?.quote?.displaySymbol}`);
+      const res = await axios.get(
+        `${config.apiBackend}/quote/getDetail/${quote?.quote?.displaySymbol}`
+      );
 
-      if(res){
+      if (res) {
         setPresentPrice(res.data);
       }
     } catch (error) {
-      console.error("Error fetching price data:", error); 
+      console.error("Error fetching price data:", error);
     }
-  }
+  };
 
-  useEffect(() =>{
-    if(order){
+  useEffect(() => {
+    if (order) {
       const totalPrice = order.reduce((acc: number, item: any) => {
         if (item.quoteId === quote.quoteId) {
           return acc + item.priceToPay;
         }
         return acc;
       }, 0);
-     
+
       setOrderPrice(totalPrice);
     }
-  },[order])
+  }, [order]);
 
-  useEffect(()=>{
-    if(quote){
+  const [percentChange, setPercentChange] = useState<number>(0);
+
+  useEffect(() => {
+    if (allOrderPrice) {
+      const changePrice =
+        presentPrice?.regularMarketPrice * quote?.amountQuote - allOrderPrice;
+      setChangePrice(changePrice);
+      setPercentChange(
+        ((presentPrice?.regularMarketPrice * quote?.amountQuote -
+          allOrderPrice) /
+          allOrderPrice) *
+          100
+      );
+    }
+  }, [allOrderPrice, presentPrice, quote]);
+
+  useEffect(() => {
+    if (quote) {
       fetchPrice();
     }
-  },[quote])
+  }, [quote]);
+
+  const isPositive = changePrice >= 0;
+
   return (
-    <div className="flex flex-1 p-4 bg-amber-100 rounded-lg hover:shadow-2xl duration-500 flex-col">
+    <div className="flex flex-1 p-4 bg-gray-100 rounded-lg  duration-500 flex-col  hover:shadow-2xl hover:-translate-y-1 border-blue-300 hover:border-1 transition-all  ">
       <div className="flex flex-1 gap-2 ">
         <div className="flex flex-1 flex-col   ">
           <div className="flex">{quote?.quote?.displaySymbol}</div>
@@ -280,11 +331,37 @@ const QuoteCard = (prop: any) => {
           </div>
         </div>
       </div>
-      <div>
-        <div>Total Quote  : {quote?.amountQuote}</div>
-        <div>Avg Price  : {quote?.avgPrice}</div>
-        <div>Total Price  : {allOrderPrice}</div>
-        <div>{presentPrice?.regularMarketPrice}</div>
+      <div className="flex flex-1 flex-col  p-4 gap-4">
+        <div className="grid grid-cols-2 bg-white p-4 gap-4 rounded-lg shadow-lg">
+            <div>
+              <div>Total Quote </div>
+              <div>{quote?.amountQuote}</div>
+            </div>
+            <div >
+              <div>Avg Price  </div>
+              <div>{quote?.avgPrice}</div>
+            </div>
+            <div >
+              <div>Total Cost </div>
+              <div>{allOrderPrice}</div>
+            </div>
+            <div >
+              <div>Current Price  </div>
+              <div>{presentPrice?.regularMarketPrice * quote?.amountQuote}</div>
+            </div>
+        </div>
+        <div className={`${isPositive ? "text-green-500 bg-green-200" : "text-red-500 bg-red-200"}  p-4  rounded-lg shadow-lg flex items-center justify-between`}>
+          <div className="flex items-center  gap-2 ">
+            { isPositive ? <ArrowUp className="bg-green-300 p-1 rounded-full" size={32} /> :<ArrowDown className="bg-red-300 p-1 rounded-full" size={32} />}
+            <div>
+              <span className="mr-1">{isPositive ? "+" : ""}{changePrice}</span>
+              <span>({isPositive ? "+" : ""}{percentChange.toFixed(2)}%)</span>
+            </div>
+          </div>
+          <div className="text-lg font-semibold">
+            {isPositive ? <p>Profit</p> : <p>Loss</p>}
+          </div>
+        </div>
       </div>
     </div>
   );

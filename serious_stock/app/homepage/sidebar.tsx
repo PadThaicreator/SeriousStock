@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { TrendingUp, Home, PieChart, BarChart2, LogOut, BookUser, Newspaper } from 'lucide-react';
+import { TrendingUp, Home, PieChart, BarChart2, LogOut, BookUser, Newspaper, PersonStanding, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 
@@ -10,17 +10,40 @@ import { logout } from '../redux/userSlice';
 import { useEffect, useState } from 'react';
 import { Cloudinary } from '@cloudinary/url-gen/index';
 import Image from 'next/image';
+import socket from '@/utility/socket';
+import { config } from '../config';
+import axios from 'axios';
 
 export default function Sidebar() {
     const router = useRouter();
     const dispatch = useDispatch();
     const  user  = useSelector((state : any) => state?.user?.user);
     const [url, setUrl] = useState<string>("");
+    const [reqFriend, setReqFriend] = useState<number>(0);
     const Logout = () =>{
         
         router.push("/signin")
         dispatch(logout())
     }
+
+
+    const fetchReqFriend = async () => {
+      try {
+        if (!user || !user.id) {
+          console.error("User ID is not available");
+          return;
+        }
+
+
+        const res = await axios.get(`${config.apiBackend}/friend/getrequest/${user.id}`);
+        setReqFriend(res.data.length);
+      } catch (error) {
+        console.error("Error fetching friend requests:", error);
+        
+      }
+    }
+
+
 
     useEffect(() => {
     if (user.profile) {
@@ -31,7 +54,19 @@ export default function Sidebar() {
         console.log(user)
         setUrl(imgUrl);
     }
+
+    if(user){
+      fetchReqFriend();
+    }
   }, [user]);
+
+  useEffect(()=>{
+    socket.on('friend-request', ({  amount }) => {
+
+        setReqFriend(amount)
+      
+    });
+  },[])
 
 
   
@@ -72,6 +107,17 @@ export default function Sidebar() {
           <button className="sidebtn" onClick={()=>router.push("/homepage/consultant")}>
             <BookUser size={18} className="mr-3" />
              Consultant
+          </button>
+
+
+          <button className="sidebtn" onClick={()=>router.push("/homepage/friend")}>
+            <User size={18} className="mr-3" />
+             <p>Friend</p>
+            {reqFriend > 0 && (
+              <span className="bg-red-500 text-white text-xs rounded-full px-2 ml-2">
+                {reqFriend}
+              </span>
+            )}
           </button>
         </nav>
       </div>

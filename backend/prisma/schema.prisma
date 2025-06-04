@@ -32,6 +32,10 @@ model User {
   updatedAt DateTime? @updatedAt
 
   
+
+
+
+  
 }
 
 model Address {
@@ -136,4 +140,15 @@ model Message {
   receiverId String
   content    String
   createdAt  DateTime @default(now())
+}
+
+model Friend {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  friend String[]
+  senderId String @db.ObjectId
+  
+  status String @default("waiting") 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
