@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import friendSocket from "./friendSocket.js";
 const prisma = new PrismaClient();
 
 export default function (io) {
@@ -49,5 +50,6 @@ export default function (io) {
         // io.to(senderId).emit('friend-request', { status:request.status });
       });
 
+      friendSocket(io,socket);
   });
 };

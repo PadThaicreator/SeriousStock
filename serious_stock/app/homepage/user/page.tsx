@@ -248,8 +248,8 @@ export default function Page() {
                     }}
                   >
                     <option value="">-- Select Province --</option>
-                    {provinceData.map((prov) => (
-                      <option key={prov.name_en} value={prov.name_en}>
+                    {provinceData.map((prov , index) => (
+                      <option key={index} value={prov.name_en}>
                         {prov.name_en}
                       </option>
                     ))}
@@ -272,8 +272,8 @@ export default function Page() {
                     }}
                   >
                     <option value="">-- Select District --</option>
-                    {districts.map((dist) => (
-                      <option key={dist.name_en} value={dist.name_en}>
+                    {districts.map((dist , index) => (
+                      <option key={index} value={dist.name_en}>
                         {dist.name_en}
                       </option>
                     ))}
@@ -294,8 +294,8 @@ export default function Page() {
                     }}
                   >
                     <option value="">-- Select Sub District --</option>
-                    {subDistricts.map((sub) => (
-                      <option key={sub.name_en} value={sub.name_en}>
+                    {subDistricts.map((sub , index) => (
+                      <option key={index} value={sub.name_en}>
                         {sub.name_en}
                       </option>
                     ))}

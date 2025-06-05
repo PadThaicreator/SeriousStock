@@ -80,12 +80,16 @@ export default function Page() {
  
 
   const handleRequest = () => {
+
+    if(isRequestSent?.status != "Send Resquest"){
+      return;
+    }
     socket.emit("send-friend-request", {
       senderId: user.id,
       receiverId: selectedConsultant,
     });
     fetchConDetail();
-  
+    
   };
 
 

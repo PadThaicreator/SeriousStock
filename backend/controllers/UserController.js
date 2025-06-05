@@ -200,5 +200,16 @@ export const UserController = {
       res.status(500).json({ error: error.message });
       
     }
+  },
+  getUser : async (req ,res) =>{
+    try {
+      const user = await prisma.user.findFirst({
+        where : { id : req.params.id }
+      })
+      
+      res.json(user);
+    } catch (error) {
+       res.status(500).json({ error: error.message });
+    }
   }
 };

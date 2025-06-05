@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
+import { Socket } from "socket.io";
 
 const { json } = bodyParser;
 const prisma = new PrismaClient();
@@ -15,7 +16,7 @@ export const FriendController = {
       const friendId = req.params.friendId;
       const friendStatus = await prisma.friend.findFirst({
         where: {
-          friend: { has: userId && friendId }
+          friend: { hasEvery: [userId, friendId] }
         }
       });
       if(!friendStatus) {
@@ -49,4 +50,42 @@ export const FriendController = {
       
     }
   },
+  updateStatus : async (req ,res) =>{
+    try {
+
+      const isAccept = req.body.isAccept;
+      console.log(isAccept);
+
+      const data = await prisma.friend.findFirst({
+        where : {
+            friend : { hasEvery : [req.body.senderId , req.body.userId]}
+          }
+      })
+
+      if(!data){
+        res.status(404).json({message : "Not Found"})
+      }
+      if(isAccept){
+        await prisma.friend.update({
+          data : {
+              status : "Accepted"
+          },
+          where : {
+            id : data.id
+          }
+        })
+      }else{
+        await prisma.friend.delete({
+          where : {
+            id : data.id
+          }
+        })
+      }
+      
+      res.json({message : "Successful"});
+    } catch (error) {
+       res.status(500).json({ error: error.message });
+       console.log(error);
+    }
+  }
 };

@@ -8,5 +8,6 @@ router.post('/create', UserController.create);
 router.get('/port/:userId', UserController.getPort);
 router.get('/getall', UserController.getAllUser);
 router.get('/getConsult', UserController.getConsultant);
+router.get('/getUser/:id', UserController.getUser);
 router.put('/update', upload.single('file'), UserController.updateUser);
 export default router;
