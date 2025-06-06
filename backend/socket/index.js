@@ -27,28 +27,7 @@ export default function (io) {
     });
 
 
-    socket.on('send-friend-request', async ({ senderId, receiverId }) => {
-      console.log(`Friend request from ${senderId} to ${receiverId}`);
-      const request = await prisma.friend.create({
-        data : {
-          friend : [ senderId , receiverId],
-          senderId: senderId,
-
-        }
-      })
-
-      const amount = await prisma.friend.count({
-        where : {
-          friend: {
-            has: receiverId
-          },
-          status: 'waiting'
-        }
-      })
-      console.log(`Friend request count for ${receiverId}: ${amount}`);
-        io.to(receiverId).emit('friend-request', {  amount });
-        // io.to(senderId).emit('friend-request', { status:request.status });
-      });
+    
 
       friendSocket(io,socket);
   });

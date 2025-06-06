@@ -6,7 +6,14 @@ import { Cloudinary } from "@cloudinary/url-gen/index";
 import axios from "axios";
 import { use, useEffect, useState } from "react";
 import Image from "next/image";
-import { ArrowDown, ArrowUp, Divide, Mail, Phone, TrendingUp } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Divide,
+  Mail,
+  Phone,
+  TrendingUp,
+} from "lucide-react";
 import LoadingPage from "@/utility/loading";
 import socket from "@/utility/socket";
 import { useSelector } from "react-redux";
@@ -17,15 +24,14 @@ export default function Page() {
   const [detail, setDetail] = useState<any>();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [isRequestSent, setIsRequestSent] = useState();
-  const  user  = useSelector((state : any) => state?.user?.user);
+  const [isRequestSent, setIsRequestSent] = useState("Send Request");
+  const user = useSelector((state: any) => state?.user?.user);
   const fetchConsultant = async () => {
     try {
       setLoading(true);
       const res = await axios.get(`${config.apiBackend}/user/getConsult`);
-      
+
       setConsult(res.data);
-      
     } catch (error) {
       console.error("Error fetching consultant data:", error);
     } finally {
@@ -38,9 +44,10 @@ export default function Page() {
       const res = await axios.get(
         `${config.apiBackend}/user/port/${selectedConsultant}`
       );
-      const reqfri = await axios.get(`${config.apiBackend}/friend/status/${user.id}/${selectedConsultant}`);
-      if(reqfri)
-        setIsRequestSent(reqfri.data);
+      const reqfri = await axios.get(
+        `${config.apiBackend}/friend/status/${user.id}/${selectedConsultant}`
+      );
+      if (reqfri) setIsRequestSent(reqfri.data);
 
       setDetail(res.data);
     } catch (error) {
@@ -61,7 +68,16 @@ export default function Page() {
 
   useEffect(() => {
     fetchConsultant();
+
+    // socket.on("friend-response" , (( ) =>{
+    //     alert(selectedConsultant)
+    //     if (selectedConsultant && user?.id) {
+    //       fetchConDetail();
+    //     }
+    // }))
   }, []);
+
+ 
 
   useEffect(() => {
     if (!selectedConsultant) return;
@@ -69,19 +85,14 @@ export default function Page() {
     console.log("Selected Consultant ID:", selectedConsultant);
   }, [selectedConsultant]);
 
- 
-
-
+  
 
   if (loading) {
     return <LoadingPage />;
   }
 
- 
-
   const handleRequest = () => {
-
-    if(isRequestSent?.status != "Send Resquest"){
+    if (isRequestSent?.status != "Send Resquest") {
       return;
     }
     socket.emit("send-friend-request", {
@@ -89,10 +100,8 @@ export default function Page() {
       receiverId: selectedConsultant,
     });
     fetchConDetail();
-    
+    alert(selectedConsultant)
   };
-
-
 
   return (
     <div className="flex flex-1 bg-white flex-col gap-5 p-4">
@@ -162,8 +171,13 @@ export default function Page() {
               <div className="hover:bg-green-400 hover:text-black  bg-green-300 p-1 px-3 rounded-2xl text-gray-600">
                 {detail?.status}
               </div>
-              <div className={`${user.id === selectedConsultant ? "hidden" : ""} flex items-center bg-amber-300 py-1 px-3 rounded-lg shadow-lg text-white hover:bg-amber-500  transition-colors duration-200 cursor-pointer`} onClick={handleRequest}>
-                {isRequestSent?.status || "Send Request"}
+              <div
+                className={`${
+                  user.id === selectedConsultant ? "hidden" : ""
+                } flex items-center bg-amber-300 py-1 px-3 rounded-lg shadow-lg text-white hover:bg-amber-500  transition-colors duration-200 cursor-pointer`}
+                onClick={handleRequest}
+              >
+                {isRequestSent?.status}
               </div>
             </div>
           </div>
@@ -337,29 +351,45 @@ const QuoteCard = (prop: any) => {
       </div>
       <div className="flex flex-1 flex-col  p-4 gap-4">
         <div className="grid grid-cols-2 bg-white p-4 gap-4 rounded-lg shadow-lg">
-            <div>
-              <div>Total Quote </div>
-              <div>{quote?.amountQuote}</div>
-            </div>
-            <div >
-              <div>Avg Price  </div>
-              <div>{quote?.avgPrice}</div>
-            </div>
-            <div >
-              <div>Total Cost </div>
-              <div>{allOrderPrice}</div>
-            </div>
-            <div >
-              <div>Current Price  </div>
-              <div>{presentPrice?.regularMarketPrice * quote?.amountQuote}</div>
-            </div>
+          <div>
+            <div>Total Quote </div>
+            <div>{quote?.amountQuote}</div>
+          </div>
+          <div>
+            <div>Avg Price </div>
+            <div>{quote?.avgPrice}</div>
+          </div>
+          <div>
+            <div>Total Cost </div>
+            <div>{allOrderPrice}</div>
+          </div>
+          <div>
+            <div>Current Price </div>
+            <div>{((presentPrice?.regularMarketPrice * quote?.amountQuote).toFixed(2)).toString()}</div>
+          </div>
         </div>
-        <div className={`${isPositive ? "text-green-500 bg-green-200" : "text-red-500 bg-red-200"}  p-4  rounded-lg shadow-lg flex items-center justify-between`}>
+        <div
+          className={`${
+            isPositive
+              ? "text-green-500 bg-green-200"
+              : "text-red-500 bg-red-200"
+          }  p-4  rounded-lg shadow-lg flex items-center justify-between`}
+        >
           <div className="flex items-center  gap-2 ">
-            { isPositive ? <ArrowUp className="bg-green-300 p-1 rounded-full" size={32} /> :<ArrowDown className="bg-red-300 p-1 rounded-full" size={32} />}
+            {isPositive ? (
+              <ArrowUp className="bg-green-300 p-1 rounded-full" size={32} />
+            ) : (
+              <ArrowDown className="bg-red-300 p-1 rounded-full" size={32} />
+            )}
             <div>
-              <span className="mr-1">{isPositive ? "+" : ""}{changePrice}</span>
-              <span>({isPositive ? "+" : ""}{percentChange.toFixed(2)}%)</span>
+              <span className="mr-1">
+                {isPositive ? "+" : ""}
+                {changePrice}
+              </span>
+              <span>
+                ({isPositive ? "+" : ""}
+                {percentChange.toFixed(2)}%)
+              </span>
             </div>
           </div>
           <div className="text-lg font-semibold">

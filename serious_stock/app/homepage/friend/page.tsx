@@ -5,13 +5,20 @@ import {
   ChevronDown,
   ChevronUp,
   CirclePlus,
+  CircleX,
+  MessageCircle,
   MessagesSquare,
+  X,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import RequestModal from "./component/request";
 import { useEffect, useState } from "react";
 import Modal from "@/utility/modal";
 import socket from "@/utility/socket";
+import axios from "axios";
+import { config } from "@/app/config";
+import { Cloudinary } from "@cloudinary/url-gen/index";
+import Image from "next/image";
 
 export default function Page() {
   const user = useSelector((state: any) => state?.user?.user);
@@ -58,7 +65,7 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div>
+      <div className="flex flex-col flex-1 gap-3">
         {friendList.map((item, i) => {
           const friend = item.friend.find((id  : string) => id !== user.id);
           return <FriendCard id={friend} key={i} />
@@ -75,12 +82,55 @@ export default function Page() {
 }
 
 
-const FriendCard = ( prop ) =>{
+const FriendCard = ( prop : any ) =>{
   const { id } = prop;
+  const [user,setUser] = useState();
+  const [url , setUrl] = useState("");
+
+  const fetchUser =  async() =>{
+    try {
+      const res = await axios.get(`${config.apiBackend}/user/getUser/${id}`)
+      if(res){
+        setUser(res.data);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(()=>{
+    if(id){
+      fetchUser();
+    }
+  },[id])
+
+    useEffect(() => {
+    if (user) {
+      const cld = new Cloudinary({ cloud: { cloudName: "dlsd9groz" } });
+      const img = cld.image(user?.profile);
+      const imgUrl = img.toURL() + `?t=${Date.now()}`;
+      setUrl(imgUrl);
+    }
+  }, [user]);
 
   return(
-    <div >
-      {id}
+    <div className="bg-gray-100 p-4 rounded-lg shadow-lg flex flex-1 justify-between ">
+      <div className="flex flex-1 items-center gap-4">
+        <div className="w-24 h-24 rounded-full overflow-hidden">
+          { url && <Image
+            src={url}
+            width={150}
+            height={150}
+            alt="profile"
+            className="w-full h-full object-cover"
+          />}
+        </div>
+        <div className="text-lg">{user?.name} <p className="text-[0.9em]">(@{user?.username})</p></div>
+      </div>
+      <div className="flex items-center gap-4">
+        <MessageCircle size={24} className="text-amber-500 cursor-pointer"/>
+        <CircleX  size={24} className="text-red-500 cursor-pointer"/>
+      </div>
     </div>
   );
 }

@@ -19,9 +19,10 @@ export default function (io, socket) {
         status: "waiting",
       },
     });
-    console.log(`Friend request count for ${receiverId}: ${amount}`);
+    
     io.to(receiverId).emit("friend-request", { amount });
-    // io.to(senderId).emit('friend-request', { status:request.status });
+
+   
   });
 
   socket.on(
@@ -50,10 +51,10 @@ export default function (io, socket) {
           await prisma.friend.delete({ where: { id: data.id } });
         }
 
-        // ส่งสถานะกลับให้ทั้งสองคน
+        
         io.to(senderId).emit("friend-response", {
-          success: true,
-          message: "Updated",
+          status: "Accepted",
+          id: userId,
           
         });
         io.to(userId).emit("friend-response", {
@@ -79,6 +80,9 @@ export default function (io, socket) {
                 status : "Accepted"
             }
         })
+
+
+        
 
         
 
