@@ -19,6 +19,7 @@ import axios from "axios";
 import { config } from "@/app/config";
 import { Cloudinary } from "@cloudinary/url-gen/index";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const user = useSelector((state: any) => state?.user?.user);
@@ -68,7 +69,7 @@ export default function Page() {
       <div className="flex flex-col flex-1 gap-3">
         {friendList.map((item, i) => {
           const friend = item.friend.find((id  : string) => id !== user.id);
-          return <FriendCard id={friend} key={i} />
+          return <FriendCard id={friend} key={i} ownerId={user.id} />
         })}
       </div>
 
@@ -83,10 +84,10 @@ export default function Page() {
 
 
 const FriendCard = ( prop : any ) =>{
-  const { id } = prop;
+  const { id , ownerId } = prop;
   const [user,setUser] = useState();
   const [url , setUrl] = useState("");
-
+  const router = useRouter();
   const fetchUser =  async() =>{
     try {
       const res = await axios.get(`${config.apiBackend}/user/getUser/${id}`)
@@ -113,6 +114,18 @@ const FriendCard = ( prop : any ) =>{
     }
   }, [user]);
 
+  const handleChannel = async () =>{
+    try {
+      const res = await axios.post(`${config.apiBackend}/channel/create` , {user : [ownerId , id]})
+      if(res){
+        
+        router.push(`/homepage/friend/${res.data.id}`)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return(
     <div className="bg-gray-100 p-4 rounded-lg shadow-lg flex flex-1 justify-between ">
       <div className="flex flex-1 items-center gap-4">
@@ -128,7 +141,7 @@ const FriendCard = ( prop : any ) =>{
         <div className="text-lg">{user?.name} <p className="text-[0.9em]">(@{user?.username})</p></div>
       </div>
       <div className="flex items-center gap-4">
-        <MessageCircle size={24} className="text-amber-500 cursor-pointer"/>
+        <MessageCircle size={24} className="text-amber-500 cursor-pointer"  onClick={handleChannel}/>
         <CircleX  size={24} className="text-red-500 cursor-pointer"/>
       </div>
     </div>

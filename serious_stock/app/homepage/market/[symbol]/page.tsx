@@ -28,6 +28,7 @@ import { Filler } from "chart.js";
 import DetailQuote from "./DetailQuote";
 import Sell from "./sell";
 import Buy from "./buy";
+import LoadingPage from "@/utility/loading";
 ChartJS.register(Filler);
 
 export default function Page() {
@@ -82,7 +83,9 @@ export default function Page() {
   }, [dataPrice]);
 
 
-
+  if(loading){
+    return <LoadingPage />
+  }
   
   const startPrice = data[0] || 0;
   const endPrice = data[data.length - 1] || 0;

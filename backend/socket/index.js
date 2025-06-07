@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import friendSocket from "./friendSocket.js";
+import messageSocket from "./messageSocket.js";
 const prisma = new PrismaClient();
 
 export default function (io) {
@@ -30,5 +31,6 @@ export default function (io) {
     
 
       friendSocket(io,socket);
+      messageSocket(io,socket);
   });
 };

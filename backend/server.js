@@ -43,7 +43,7 @@ import orderRoute from "./routes/order.route.js";
 import sellRoute from "./routes/sell.route.js";
 import fileRoute from "./routes/file.route.js";
 import friendRoute from "./routes/friend.route.js";
-
+import channelRoute from "./routes/channel.route.js";
 app.use("/user", userRoutes);
 app.use("/port", portRoutes);
 app.use("/quote", quoteRoutes);
@@ -51,6 +51,8 @@ app.use("/order", orderRoute);
 app.use("/sell" , sellRoute);
 app.use("/upload" , fileRoute);
 app.use("/friend" , friendRoute);
+app.use("/channel" , channelRoute);
+
 
 
 const server = http.createServer(app);

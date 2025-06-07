@@ -26,21 +26,15 @@ model User {
   profile   String?
   portfolio Portfolio[]
   SellOrder SellOrder[]
-  address Address?
+  address   Address?
 
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-
-  
-
-
-
-  
 }
 
 model Address {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @db.ObjectId @unique
+  userId String @unique @db.ObjectId
   user   User   @relation(fields: [userId], references: [id])
 
   province    String
@@ -134,21 +128,36 @@ model SellOrder {
   createdAt DateTime
 }
 
-model Message {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  senderId   String
-  receiverId String
-  content    String
-  createdAt  DateTime @default(now())
-}
-
 model Friend {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  friend String[]
-  senderId String @db.ObjectId
-  
-  status String @default("waiting") 
+  friend   String[]
+  senderId String   @db.ObjectId
+
+  status    String   @default("waiting")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Channel {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  user     String[]
+  channelName String?
+  status   String   @default("active")
+  createAt DateTime @default(now())
+
+  message Message[]
+}
+
+model Message {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  content  String
+  type     String   @default("text")
+  status   String   @default("unread")
+  createAt DateTime @default(now())
+  file     String
+  senderId String
+
+  channelId String  @db.ObjectId
+  channel   Channel @relation(fields: [channelId], references: [id])
 }
