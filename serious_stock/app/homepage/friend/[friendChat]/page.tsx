@@ -22,7 +22,7 @@ import { useSelector } from "react-redux";
 export default function Page() {
   const params = useParams();
   const user = useSelector((state: any) => state?.user?.user);
-  const [channel, setChannel] = useState();
+  const [channel, setChannel] = useState<any>();
   const [nameCh, setNameCh] = useState();
   const [messages, setMessages] = useState([]);
   const id = params.friendChat;
