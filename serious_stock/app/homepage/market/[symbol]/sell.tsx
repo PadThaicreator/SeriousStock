@@ -17,13 +17,13 @@ interface itemProps {
 export default function Sell(prop: any) {
   const { quote } = prop;
   const [isOpen, setOpen] = useState(false);
-  const [quotePort, setQuotePort] = useState();
-  const [port, setPort] = useState([]);
+  const [quotePort, setQuotePort] = useState<any>();
+  const [port, setPort] = useState<any>([]);
   const [portId, setPortId] = useState<string>();
-  const [amountQuote, setAmountQuote] = useState<number>();
+  const [amountQuote, setAmountQuote] = useState<number>(1);
   const [want, setWant] = useState("");
   const [quoteId, setQuoteId] = useState("");
-  const [amountSell, setAmountSell] = useState<number>();
+  const [amountSell, setAmountSell] = useState<number>(1);
   const [priceSell, setPriceSell] = useState<number>();
 
   const { user } = useSelector((state: any) => state.user);
