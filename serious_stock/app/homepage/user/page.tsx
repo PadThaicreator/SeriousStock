@@ -68,13 +68,13 @@ export default function Page() {
       setDistricts(loadedDistricts);
 
       const district = loadedDistricts.find(
-        (d) => d.name_en === selectedDistrict
+        (d : any) => d.name_en === selectedDistrict
       );
       const loadedSubDistricts = district?.tambon || [];
       setSubDistricts(loadedSubDistricts);
 
       const sub = loadedSubDistricts.find(
-        (s) => s.name_en === selectedSubDistrict
+        (s : any) => s.name_en === selectedSubDistrict
       );
       if (sub) {
         setZipCode(sub.zip_code);
