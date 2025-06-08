@@ -70,11 +70,11 @@ export const FileController = {
 
         fileUrls.push(result.secure_url);
 
-        // ลบไฟล์ชั่วคราว
+        
         fs.unlinkSync(file.path);
       }
 
-      res.status(200).json({ files: fileUrls });
+      res.status(200).json({ file: fileUrls });
       
     } catch (error) {
       console.error(error);

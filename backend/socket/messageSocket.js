@@ -18,10 +18,12 @@ export default function (io, socket) {
         where : { id : channelId}
       })
 
+      
+
       channel.user.forEach(item => {
-        if(item !=senderId){
+       
           io.to(item).emit('get-message', message);
-        }
+        
       });
   })
 }

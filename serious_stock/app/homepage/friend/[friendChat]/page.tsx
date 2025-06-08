@@ -71,14 +71,14 @@ export default function Page() {
 
   return (
     <div className="flex flex-1 bg-gray-100 rounded-lg p-4 flex-col">
-      <div className=" rounded-lg shadow-lg">
+      <div className=" rounded-lg shadow-lg ">
         <div className="flex flex-1 p-4 border-b ">
           <HeaderChat head={nameCh} />
         </div>
-        <div className="flex flex-6 p-4  ">
+        <div className="flex flex-2 p-2  ">
           <MessageZone messages={messages} user={user} channel={channel} />
         </div>
-        <div className="flex flex-1 p-4  ">
+        <div className="flex flex-1 p-2  ">
           <TypingZone chId={id} setMessages={setMessages} user={user} />
         </div>
       </div>
@@ -134,19 +134,45 @@ const TypingZone = (prop: any) => {
   const [file, setFile] = useState([]);
   const [image, setImage] = useState([]);
 
-  const handleSend = () => {
-    socket.emit("send-message", {
-      senderId: user.id,
-      content: text,
-      channelId: chId,
-    });
+  const handleSend = async () => {
+    try {
+      document.body.style.cursor = "wait";
+      let res;
+      if (file) {
+        const formData = new FormData();
+        Array.from(file).forEach((f) => {
+          formData.append("files", f);
+        });
 
-    setMessages((prev) => [
-      ...prev,
-      { senderId: user.id, content: text, channelId: chId },
-    ]);
+        res = await axios.post(
+          `${config.apiBackend}/upload/uploadMany`,
+          formData
+        );
+      }
 
-    setText("");
+      if (file) {
+        socket.emit("send-message", {
+          senderId: user.id,
+          content: text || "",
+          channelId: chId,
+          file: res?.data.file,
+        });
+      } else {
+        socket.emit("send-message", {
+          senderId: user.id,
+          content: text,
+          channelId: chId,
+        });
+      }
+
+      setText("");
+      setFile([]);
+      setImage([]);
+    } catch (error) {
+      console.log(error);
+    }finally{
+      document.body.style.cursor = "default";
+    }
   };
   const fileInputRef = useRef(null);
   const handleFile = (e) => {
@@ -162,7 +188,7 @@ const TypingZone = (prop: any) => {
     fileInputRef.current?.click();
   };
   return (
-    <div className="flex flex-1 p-1  rounded-2xl  gap-4 flex-col">
+    <div className="flex flex-1   gap-4 flex-col ">
       <div
         className={`flex gap-4 mt-4  ${
           image.length > 0 ? "h-40 overflow-x-auto" : ""
@@ -194,21 +220,20 @@ const TypingZone = (prop: any) => {
                 />
               </a>
             ) : (
-            <a href={src} target="_blank" rel="noopener noreferrer">
-              <div className="w-40 h-full bg-gray-200 border hover:border-blue-500  shadow-xl rounded-lg flex items-center justify-center flex-col p-2">
-                
-                <div
-                  className="font-medium text-sm truncate max-w-full"
-                  title={file[index].name}
-                >
-                  {file[index].name}
-                </div>
+              <a href={src} target="_blank" rel="noopener noreferrer">
+                <div className="w-40 h-full bg-gray-200 border hover:border-blue-500  shadow-xl rounded-lg flex items-center justify-center flex-col p-2">
+                  <div
+                    className="font-medium text-sm truncate max-w-full"
+                    title={file[index].name}
+                  >
+                    {file[index].name}
+                  </div>
 
-                <div className="text-xs text-gray-600">
-                  {(file[index].size / 1024).toFixed(1)} KB
+                  <div className="text-xs text-gray-600">
+                    {(file[index].size / 1024).toFixed(1)} KB
+                  </div>
                 </div>
-              </div>
-            </a>
+              </a>
             )}
           </div>
         ))}
@@ -246,7 +271,7 @@ const MessageZone = (prop: any) => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
   return (
-    <div className="flex flex-1 h-85 flex-col overflow-y-auto gap-2">
+    <div className="flex flex-1 h-85 3xl:h-150  flex-col overflow-y-auto gap-1 ">
       {messages?.map((item, index) => (
         <div
           key={index}
@@ -255,7 +280,20 @@ const MessageZone = (prop: any) => {
           }`}
         >
           <div className="  rounded-lg p-2 px-4 bg-blue-300">
-            {item.content}
+            <div>{item.content}</div>
+            <div className="flex gap-4">
+              {item?.file?.map((img, idx) => (
+                <div key={idx} className="w-64 h-64">
+                  <Image
+                    src={img || "/public/image/noImage.png"}
+                    width={120}
+                    height={120}
+                    alt={img}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       ))}
