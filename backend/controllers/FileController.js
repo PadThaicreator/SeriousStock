@@ -1,17 +1,17 @@
 import { PrismaClient } from "@prisma/client";
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 import multer from "multer";
-import streamifier from 'streamifier';
+import streamifier from "streamifier";
+import fs from "fs";
 
 dotenv.config();
 const prisma = new PrismaClient();
 
-
-
 // multer setup
 const storage = multer.memoryStorage();
 export const upload = multer({ storage });
+export const uploadArray = multer({ dest: "temp/" });
 
 export const FileController = {
   uploadApprove: async (req, res) => {
@@ -29,7 +29,7 @@ export const FileController = {
             {
               folder: "approve",
               public_id: `user_${user}_approve`,
-              resource_type: "auto", 
+              resource_type: "auto",
             },
             (error, result) => {
               if (result) resolve(result);
@@ -51,7 +51,31 @@ export const FileController = {
       //   },
       // });
 
-      return res.status(200).json({ message: "Uploaded successfully", data: uploadResult });
+      return res
+        .status(200)
+        .json({ message: "Uploaded successfully", data: uploadResult });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Upload failed", error });
+    }
+  },
+  uploadMany: async (req, res) => {
+    try {
+      const fileUrls = [];
+
+      for (const file of req.files) {
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: "chat_uploads",
+        });
+
+        fileUrls.push(result.secure_url);
+
+        // ลบไฟล์ชั่วคราว
+        fs.unlinkSync(file.path);
+      }
+
+      res.status(200).json({ files: fileUrls });
+      
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Upload failed", error });

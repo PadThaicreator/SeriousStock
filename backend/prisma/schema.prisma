@@ -155,7 +155,7 @@ model Message {
   type     String   @default("text")
   status   String   @default("unread")
   createAt DateTime @default(now())
-  file     String
+  file     String[]
   senderId String
 
   channelId String  @db.ObjectId

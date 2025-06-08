@@ -9,7 +9,7 @@ export default function (io, socket) {
             channelId : channelId,
             senderId : senderId,
             content : content || "",
-            file : file || "",
+            file : file || [""],
             type : file ? "file" : "text"
         }
       })
