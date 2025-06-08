@@ -25,7 +25,7 @@ function
   - set profile
 - consultant
   - same user
-  - chat with user (dont have now)
+  - chat with user 
   - recommend quote to user (dont have now)
 
 
