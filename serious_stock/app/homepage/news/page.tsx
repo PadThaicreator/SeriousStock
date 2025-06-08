@@ -24,7 +24,7 @@ interface itemProps {
   content: string;
   category: string;
 }
-export const DataContexts = createContext<any>(undefined);
+ const DataContexts = createContext<any>(undefined);
 
 export default function Page() {
   const [news, setNews] = useState<itemProps[]>([]);
