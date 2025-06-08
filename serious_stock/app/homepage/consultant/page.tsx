@@ -279,10 +279,11 @@ const PortCard = (prop: any) => {
   );
 };
 
+
 const QuoteCard = (prop: any) => {
   const { quote, order } = prop;
   const [allOrderPrice, setOrderPrice] = useState<number>(0);
-  const [presentPrice, setPresentPrice] = useState<number>(0);
+  const [presentPrice, setPresentPrice] = useState<any>();
   const [changePrice, setChangePrice] = useState<number>(0);
 
   const fetchPrice = async () => {
