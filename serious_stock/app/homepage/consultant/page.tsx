@@ -24,7 +24,7 @@ export default function Page() {
   const [detail, setDetail] = useState<any>();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [isRequestSent, setIsRequestSent] = useState("Send Request");
+  const [isRequestSent, setIsRequestSent] = useState<any>("Send Request");
   const user = useSelector((state: any) => state?.user?.user);
   const fetchConsultant = async () => {
     try {
