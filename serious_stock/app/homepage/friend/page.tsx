@@ -8,7 +8,6 @@ import {
   CircleX,
   MessageCircle,
   MessagesSquare,
-  X,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import RequestModal from "./component/request";
@@ -36,7 +35,8 @@ export default function Page() {
       setFriend(data);
     });
 
-    socket.on("friend-response", (item) => {
+    socket.on("friend-response", (item : any) => {
+      console.log(item)
       socket.emit("get-friend", { userId: user.id });
     });
   }, []);
@@ -67,7 +67,7 @@ export default function Page() {
         </div>
       </div>
       <div className="flex flex-col flex-1 gap-3">
-        {friendList.map((item, i) => {
+        {friendList.map((item : any, i) => {
           const friend = item.friend.find((id  : string) => id !== user.id);
           return <FriendCard id={friend} key={i} ownerId={user.id} />
         })}
@@ -85,7 +85,7 @@ export default function Page() {
 
 const FriendCard = ( prop : any ) =>{
   const { id , ownerId } = prop;
-  const [user,setUser] = useState();
+  const [user,setUser] = useState<any>();
   const [url , setUrl] = useState("");
   const router = useRouter();
   const fetchUser =  async() =>{

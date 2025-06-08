@@ -73,7 +73,7 @@ export default function Page() {
 
     try {
       setIsUploading(true);
-      const response = await axios.post(`${config.apiBackend}/upload/approve`, formData, {
+       await axios.post(`${config.apiBackend}/upload/approve`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

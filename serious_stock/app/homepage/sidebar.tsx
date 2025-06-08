@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { TrendingUp, Home, PieChart, BarChart2, LogOut, BookUser, Newspaper, PersonStanding, User } from 'lucide-react';
+import { TrendingUp, Home, PieChart, BarChart2, LogOut, BookUser, Newspaper, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 

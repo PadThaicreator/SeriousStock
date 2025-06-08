@@ -1,23 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Modal from "@/utility/modal";
 
 import { CalendarDays, Copyright, User } from "lucide-react";
 
 
-interface NewsCardProps {
-    title: string;
-    author: string;
-    date: string;
-    image: string;
-    category: string;
-    description : string;
-    content : string;
-    url : string;
-  }
+// interface NewsCardProps {
+//     title: string;
+//     author: string;
+//     date: string;
+//     image: string;
+//     category: string;
+//     description : string;
+//     content : string;
+//     url : string;
+//   }
 
   interface NewsModalProps {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
-    selectedNews: NewsCardProps;
+    selectedNews: any;
   
   }
 

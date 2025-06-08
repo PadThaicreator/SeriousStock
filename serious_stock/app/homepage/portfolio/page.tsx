@@ -12,14 +12,14 @@ import {
   Save,
   ChevronDown,
   ChevronUp,
-  Percent,
+  
 } from "lucide-react";
 import Modal from "@/utility/modal";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { config } from "@/app/config";
 import Swal from "sweetalert2";
-import LoadingPage from "@/utility/loading";
+
 import QuoteCard from "./quotecard";
 
 interface itemProps  {
@@ -227,7 +227,7 @@ interface PortProps {
 }
 
 const PortDashboard = ({ name, portId  }: any) => {
-  const [loading , setLoading] = useState<boolean>(false)
+  
   const [isHovered, setIsHovered] = useState(false);
   const [port , setPort] = useState<PortProps>();
   const [quoteCost , setQuoteCost] = useState(0);
@@ -367,7 +367,7 @@ const PortDashboard = ({ name, portId  }: any) => {
 const PortCard = (prop : any) => {
   const { port } = prop;
   const [ portData , setPort] = useState<PortProps>();
-  const [ quote , setQuote] = useState();
+ 
   const [showDetail, setShownDetail] = useState(false);
   const handleOpenDetail = () => {
     setShownDetail(true);

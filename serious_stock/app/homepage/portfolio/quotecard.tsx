@@ -8,21 +8,21 @@ import axios from "axios";
 import { DollarSign, TrendingUp, TrendingDown, BarChart2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-interface QuoteDataProps {
-  symbol: string;
-  longName: string;
-  shortName: string;
-  region: string;
-  regularMarketPrice: number;
-  regularMarketChangePercent: number;
-}
+// interface QuoteDataProps {
+//   symbol: string;
+//   longName: string;
+//   shortName: string;
+//   region: string;
+//   regularMarketPrice: number;
+//   regularMarketChangePercent: number;
+// }
 
 const QuoteCard = (prop: any) => {
   const { quote, port } = prop;
-  const [quoteData, setQuoteData] = useState<QuoteDataProps>();
+  const [quoteData, setQuoteData] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [quoteCost, setQuoteCost] = useState<number>();
-  const [profit, setProfit] = useState<number>();
+  const [profit, setProfit] = useState<number>(0);
   const [profitPercentage, setProfitPercentage] = useState<number>();
 
   const fetchQuote = async () => {
@@ -74,7 +74,7 @@ const QuoteCard = (prop: any) => {
   const isProfitable = profit > 0;
 
   // Format currency
-  const formatCurrency = (value) => {
+  const formatCurrency = (value : any) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',

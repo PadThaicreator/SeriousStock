@@ -40,7 +40,7 @@ export default function RequestModal() {
   return (
     <div className="absolute top-25  right-18  w-100 border  bg-white flex  p-2 rounded-lg">
       <div className="flex flex-1 flex-col">
-        {request.map((item, index) => (
+        {request.map((item : any, index) => (
         <div key={index} className="border-b flex flex-1">
             <RequestCard key={index}  id={item.senderId} fetchReq={fetchReqFriend} />
         </div>
@@ -55,7 +55,7 @@ export default function RequestModal() {
 const RequestCard = (prop: any) => {
   const { id , fetchReq } = prop;
 
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<any>();
   const [url, setUrl] = useState("");
   const owner = useSelector((state : any) => state.user.user)
 
@@ -98,8 +98,8 @@ const RequestCard = (prop: any) => {
   }
 
   useEffect(() => {
-    socket.on("friend-response" , (item) => {
-     
+    socket.on("friend-response" , (item : any) => {
+      console.log(item)
       fetchReq();
     })
   },[])
