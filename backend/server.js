@@ -12,7 +12,7 @@ import { Server } from "socket.io";
 const prisma = new PrismaClient();
 
 const app = express();
-const port = 3001;
+
 
 app.use(cors());
 app.use(express.json());
@@ -68,6 +68,6 @@ const io = new Server(server, {
 initSocket(io);
 
 
-server.listen(port, () => {
-  console.log(`server is running on port http://localhost:${port}`);
+server.listen(process.env.PORT, () => {
+  console.log(`server is running on port http://localhost:${process.env.PORT}`);
 });
