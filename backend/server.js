@@ -20,9 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 
 import { v2 as cloudinary } from 'cloudinary';
 cloudinary.config({ 
-  cloud_name: 'dlsd9groz', 
-  api_key: '695342417365959', 
-  api_secret: 'xBmeSy1yVMOAfrdfeCdDl1LohEU'
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET
 });
 
 app.get("/check-db-connection", async (req, res) => {
