@@ -19,13 +19,26 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
+type Message = {
+  id: string;
+  content: string;
+  type: string; // e.g., "text", "image", etc.
+  status: string; // e.g., "unread", "read"
+  createAt: string; // Or Date, ขึ้นอยู่กับว่าคุณแปลงหรือยัง
+  file: string[];   // URLs or filenames
+  senderId: string;
+  channelId: string;
+};
+
 export default function Page() {
   const params = useParams();
   const user = useSelector((state: any) => state?.user?.user);
   const [channel, setChannel] = useState<any>();
   const [nameCh, setNameCh] = useState();
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const id = params.friendChat;
+
+
 
   const fetchChannel = async () => {
     try {
@@ -76,10 +89,10 @@ export default function Page() {
           <HeaderChat head={nameCh} />
         </div>
         <div className="flex flex-2 p-2  ">
-          <MessageZone messages={messages} user={user} channel={channel} />
+          <MessageZone messages={messages} user={user}  />
         </div>
         <div className="flex flex-1 p-2  ">
-          <TypingZone chId={id} setMessages={setMessages} user={user} />
+          <TypingZone chId={id}  user={user} />
         </div>
       </div>
     </div>
@@ -129,10 +142,10 @@ const HeaderChat = (prop: any) => {
 };
 
 const TypingZone = (prop: any) => {
-  const { chId, setMessages, user } = prop;
+  const { chId, user } = prop;
   const [text, setText] = useState<string>("");
-  const [file, setFile] = useState([]);
-  const [image, setImage] = useState([]);
+  const [file, setFile] = useState<any>([]);
+  const [image, setImage] = useState<string[]>([]);
 
   const handleSend = async () => {
     try {
@@ -140,7 +153,7 @@ const TypingZone = (prop: any) => {
       let res;
       if (file) {
         const formData = new FormData();
-        Array.from(file).forEach((f) => {
+        Array.from(file).forEach((f : any) => {
           formData.append("files", f);
         });
 
@@ -174,13 +187,13 @@ const TypingZone = (prop: any) => {
       document.body.style.cursor = "default";
     }
   };
-  const fileInputRef = useRef(null);
-  const handleFile = (e) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleFile = (e : any) => {
     const files = e.target.files;
     setFile(files);
 
     if (files) {
-      const urls = Array.from(files).map((file) => URL.createObjectURL(file));
+      const urls = Array.from(files).map((file : any) => URL.createObjectURL(file));
       setImage(urls);
     }
   };
@@ -265,14 +278,14 @@ const TypingZone = (prop: any) => {
 };
 
 const MessageZone = (prop: any) => {
-  const { messages, user, channel } = prop;
+  const { messages, user } = prop;
   const bottomRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
   return (
     <div className="flex flex-1 h-85 3xl:h-150  flex-col overflow-y-auto gap-1 ">
-      {messages?.map((item, index) => (
+      {messages?.map((item : any, index : any) => (
         <div
           key={index}
           className={`flex   rounded-lg  ${
@@ -282,7 +295,7 @@ const MessageZone = (prop: any) => {
           <div className="  rounded-lg p-2 px-4 bg-blue-300">
             <div>{item.content}</div>
             <div className="flex gap-4">
-              {item?.file?.map((img, idx) => (
+              {item?.file?.map((img : string, idx : any) => (
                 <div key={idx} className="w-64 h-64">
                   <Image
                     src={img || "/public/image/noImage.png"}
