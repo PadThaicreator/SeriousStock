@@ -54,6 +54,7 @@ export const NewsSection = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
+        
         const res = await fetchApi(config.apiGetNews);
         if (res) {
           const sorted = res.articles.sort((a: any, b: any) =>
