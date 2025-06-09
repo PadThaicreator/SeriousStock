@@ -54,7 +54,7 @@ export default function Page() {
       <h1 className="text-2xl font-bold text-gray-800 ">Stock</h1>
       <h2 className="text-blue-500  cursor-pointer">See all</h2>
     </div>
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid lg:grid-cols-4 sm:grid-cols-2 gap-3">
         {dataQuotes.slice(0, 8).map((item: object, index) => (
           <QuoteCard key={index} quote={item} />
         ))}
@@ -101,14 +101,14 @@ const QuoteCard = (prop: any) => {
  
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-amber-100 to-amber-200 hover:shadow-xl transition-all duration-300">
+    <div className="flex  flex-1 w-full h-full border border-gray-200 rounded-xl  shadow-lg bg-amber-200   hover:shadow-xl transition-all duration-300">
       {loading ? (
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
         </div>
       ) : (
-        <div className="flex p-3">
-          <div className="flex-shrink-0 mr-4">
+        <div className="flex flex-1 p-3 flex-col 2xl:flex-row gap-2">
+          <div className="flex items-center justify-center flex-shrink-0 mr-4">
             <div className="bg-white p-2 rounded-lg shadow">
               <img
                 src={quote.logo || "/image/noImage.png"}
@@ -118,10 +118,10 @@ const QuoteCard = (prop: any) => {
             </div>
           </div>
           
-          <div className="flex flex-col flex-grow">
-            <div className="flex items-center justify-between">
+          <div className="flex flex-1/4 flex-col flex-grow">
+            <div className="flex flex-1 items-center justify-between">
               <h3 className=" font-bold">{quote.displaySymbol}</h3>
-              <span className="text-[0.7rem] font-medium bg-amber-300 px-2 py-1 rounded">{quote.type}</span>
+              <span className="flex  text-[0.7rem] font-medium bg-amber-300 px-2 py-1 rounded ">{quote.type}</span>
             </div>
             
             <p className="text-gray-700 text-sm mt-1">{quote.description || "N/A"}</p>

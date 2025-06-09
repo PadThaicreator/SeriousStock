@@ -19,10 +19,10 @@ export default function Page() {
   
   return (
     <LoginPage>
-      <div className="w-full max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <div className="flex flex-1 flex-col   bg-white p-3 rounded-lg shadow-lg  w-full    ">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Select Role</h2>
         
-        <div className="space-y-6 mb-8">
+        <div className="space-y-4 ">
           <div 
             className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
               role === "user" ? "border-amber-500 bg-amber-50" : "border-gray-200 hover:border-amber-300"
@@ -36,7 +36,6 @@ export default function Page() {
             </div>
             <div className="flex-1">
               <div className="font-medium">User</div>
-              <div className="text-sm text-gray-600">สำหรับผู้ที่ต้องการใช้บริการจากที่ปรึกษา</div>
             </div>
             <input 
               type="radio" 
@@ -60,28 +59,29 @@ export default function Page() {
             </div>
             <div className="flex-1">
               <div className="font-medium">Consultant</div>
-              <div className="text-sm text-gray-600">สำหรับผู้เชี่ยวชาญที่ต้องการให้คำปรึกษา</div>
             </div>
             <input 
               type="radio" 
               name="role" 
               checked={role === "consultant"} 
               onChange={() => setRole("consultant")} 
-              className="h-5 w-5 text-amber-600"
+              className="h-5 w-5 text-amber-600 ml-2"
             />
           </div>
-        </div>
-        
-        <button 
-          className={`w-full py-3 px-4 flex items-center justify-center gap-2 rounded-md transition-all ${
+
+          <button 
+          className={`w-full py-3 px-4 flex items-center justify-center gap-2 rounded-md transition-all  ${
             role ? "bg-amber-600 text-white hover:bg-amber-700" : "bg-gray-200 text-gray-400 cursor-not-allowed"
           }`} 
           onClick={NextPage}
           disabled={!role}
         >
-          ดำเนินการต่อ
+          Next
           <ArrowRightIcon size={16} />
         </button>
+        </div>
+        
+        
       </div>
     </LoginPage>
   );

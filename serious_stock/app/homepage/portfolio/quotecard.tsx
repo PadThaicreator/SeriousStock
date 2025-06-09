@@ -83,8 +83,8 @@ const QuoteCard = (prop: any) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden border border-amber-100 transition-all hover:shadow-lg">
-      <div className="flex flex-col md:flex-row">
+    <div className=" flex flex-1 bg-white rounded-xl shadow-md  border-amber-100 transition-all hover:shadow-lg">
+      <div className="flex flex-1 flex-col md:flex-row">
    
         <div className="p-5 md:w-1/3 flex flex-col justify-between border-b md:border-b-0 md:border-r border-amber-100">
           <div>
@@ -118,27 +118,27 @@ const QuoteCard = (prop: any) => {
      
         <div className="p-5 md:w-2/3 bg-gray-50">
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white p-3 rounded-lg border border-gray-100">
-              <p className="text-xs text-gray-500">Average Price</p>
-              <div className="flex items-center mt-1">
+            <div className="flex  flex-1 flex-col bg-white p-3 rounded-lg border border-gray-100">
+              <p className=" text-xs text-gray-500">Average Price</p>
+              <div className="flex  items-center mt-1">
                 <DollarSign size={14} className="text-amber-500" />
                 <span className="text-gray-800 font-semibold">{formatCurrency(quote.avgPrice)}</span>
               </div>
             </div>
             
-            <div className="bg-white p-3 rounded-lg border border-gray-100">
+            <div className="flex  flex-1 flex-col bg-white p-3 rounded-lg border border-gray-100">
               <p className="text-xs text-gray-500">Total Cost</p>
               <p className="text-gray-800 font-semibold mt-1">{quoteCost ? formatCurrency(quoteCost) : '-'}</p>
             </div>
             
-            <div className="bg-white p-3 rounded-lg border border-gray-100">
+            <div className="flex  flex-1 flex-col bg-white p-3 rounded-lg border border-gray-100">
               <p className="text-xs text-gray-500">Present Value</p>
               <p className="text-gray-800 font-semibold mt-1">
                 {quoteData ? formatCurrency(quoteData.regularMarketPrice * quote.amountQuote) : '-'}
               </p>
             </div>
             
-            <div className={`p-3 rounded-lg ${isProfitable ? "bg-green-50 border border-green-100" : "bg-red-50 border border-red-100"}`}>
+            <div className={`p-3 rounded-lg ${isProfitable ? "flex  flex-1 flex-col bg-green-50 border border-green-100" : "bg-red-50 border border-red-100"}`}>
               <p className="text-xs text-gray-500">Profit/Loss</p>
               <div className="flex flex-col mt-1">
                 <span className={`font-semibold ${isProfitable ? "text-green-600" : "text-red-600"}`}>

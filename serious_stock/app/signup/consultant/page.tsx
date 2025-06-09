@@ -163,7 +163,7 @@ const SignUpUser = (prop : any) => {
     }
   };
   return (
-    <div>
+    <div className="grid grid-cols-2 gap-4">
       <div>
         <label className="block mb-1 font-semibold">Name</label>
         <input
@@ -231,7 +231,7 @@ const SignUpUser = (prop : any) => {
         />
       </div>
 
-      <div className="flex flex-row gap-5 items-center justify-center">
+      <div className="flex flex-row gap-5 items-center justify-center col-span-2">
         <button
           className="mt-4 bg-white border hover:bg-gray-200 text-amber-400 font-bold py-2 px-6 rounded-lg shadow-lg "
           onClick={()=>router.push('/signin')}

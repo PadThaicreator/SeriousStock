@@ -104,8 +104,8 @@ export default function Page() {
     }
   };
   return (
-    <div className="flex flex-1 flex-col gap-6 bg-gray-50 p-6">
-      <header className="flex justify-between items-center">
+    <div className="flex flex-1 flex-col gap-6 bg-gray-50 p-6 border">
+      <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-800">My Portfolios</h1>
         <div className="flex items-center gap-4">
           <button
@@ -116,7 +116,7 @@ export default function Page() {
             <span>Add Portfolio</span>
           </button>
         </div>
-      </header>
+      </div>
 
       <div className="flex flex-1 flex-col bg-white shadow-lg rounded-xl overflow-hidden ">
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 ">
@@ -154,8 +154,7 @@ export default function Page() {
           </div>
           <div className="flex flex-1  px-6 py-4 flex-col gap-4">
           {port.map((item : itemProps)=>(
-            <PortCard key={item.id}
-            port={item}
+            <PortCard key={item.id} port={item}
           />
           ))}
           </div>

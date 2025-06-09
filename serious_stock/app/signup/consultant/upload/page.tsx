@@ -107,14 +107,14 @@ export default function Page() {
 
   return (
     <LoginPage>
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-md">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-          <FileText className="mr-3 text-blue-600" />
+      <div className="flex flex-1 flex-col p-6 bg-white rounded-xl shadow-md w-full h-full gap-2">
+        <h1 className="text-l font-bold text-gray-800  flex items-center">
+          <FileText className="mr-3 text-blue-600 " />
           Upload Document for Approval
         </h1>
         
         <div 
-          className={`border-2 border-dashed rounded-lg p-8 text-center mb-6 
+          className={`flex flex-1 border-2 border-dashed rounded-lg p-8 text-center 
           ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'} 
           ${file ? 'bg-green-50 border-green-300' : ''} 
           cursor-pointer transition-colors duration-300`}
@@ -131,11 +131,11 @@ export default function Page() {
             className="hidden"
           />
           
-          <div className="flex flex-col items-center">
+          <div className="flex flex-1 flex-col items-center justify-center">
             {file ? (
-              <CheckCircle2 className="h-16 w-16 mb-4 text-green-500" />
+              <CheckCircle2 className="h-8 w-8  text-green-500" />
             ) : (
-              <Upload className="h-16 w-16 mb-4 text-gray-400" />
+              <Upload className="h-8 w-8  text-gray-400" />
             )}
             
             {file ? (
@@ -147,7 +147,7 @@ export default function Page() {
                 </p>
               </div>
             ) : (
-              <div>
+              <div className="sm:block  hidden">
                 <p className="font-medium text-gray-700">
                   Drag and drop your file here or click to browse
                 </p>

@@ -72,47 +72,52 @@ export default function Sidebar() {
   
         
   return (
-    <div className="flex flex-1 h-screen top-0 sticky bg-gradient-to-b from-amber-100 to-amber-200 flex-col shadow-lg">
-      {/* Logo and Header */}
-      <div className="p-4 border-b border-amber-300">
+    <div className="flex flex-1 md:h-screen md:gap-2 gap-15  top-0 sticky bg-gradient-to-b from-amber-100 to-amber-200 md:flex-col shadow-lg ">
+     
+      <div className="flex items-center justify-center p-4 border-b border-amber-300">
         <h1 className="text-center text-xl font-bold flex items-center justify-center text-amber-800">
           <TrendingUp className="mr-2 text-amber-600" size={20} />
           Serious Stock
         </h1>
       </div>
       
-      {/* Navigation Menu */}
-      <div className="flex-1 px-3 py-6">
-        <nav className="space-y-2">
+   
+      <div className="flex-1 px-3 md:py-6 py-2  md:block ">
+        <nav className="items-center flex md:flex-col ">
           <button className="sidebtn" onClick={()=>router.push("/homepage/home")}>
             <Home size={18} className="mr-3" />
-            Home
+            <p className='md:block hidden'>Home</p>
           </button>
 
           <button className="sidebtn" onClick={()=>router.push("/homepage/news")}>
             <Newspaper size={18} className="mr-3" />
-            InvestNews
+            
+            <p className='md:block hidden'>InvestNews</p>
           </button>
           
           <button className="sidebtn" onClick={()=>router.push("/homepage/market")}>
             <BarChart2 size={18} className="mr-3" />
-            Markets
+            
+            <p className='md:block hidden'>Markets</p>
           </button>
           
           <button className="sidebtn" onClick={()=>router.push("/homepage/portfolio")}>
             <PieChart size={18} className="mr-3" />
-            Portfolio
+            
+            <p className='md:block hidden'>Portfolio</p>
           </button>
           
           <button className="sidebtn" onClick={()=>router.push("/homepage/consultant")}>
             <BookUser size={18} className="mr-3" />
-             Consultant
+             
+             <p className='md:block hidden'>Consultant</p>
           </button>
 
 
           <button className="sidebtn" onClick={()=>router.push("/homepage/friend")}>
             <User size={18} className="mr-3" />
-             <p>Friend</p>
+            
+             <p className='md:block hidden'>Friend</p>
             {reqFriend > 0 && (
               <span className="bg-red-500 text-white text-xs rounded-full px-2 ml-2">
                 {reqFriend}
@@ -122,8 +127,8 @@ export default function Sidebar() {
         </nav>
       </div>
       
-      {/* User Profile */}
-      <div className="flex  bottom-0 mb-10 p-2 w-full cursor-pointer" onClick={()=>router.push("/homepage/user")}>
+      
+      <div className="   bottom-0 mb-10 p-2 w-full cursor-pointer md:block hidden" onClick={()=>router.push("/homepage/user")}>
         <div className="bg-white bg-opacity-80 flex items-center p-3 rounded-lg shadow-sm border border-amber-300 gap-4">
           <div className="bg-amber-500 text-white rounded-full   w-15 h-15 items-center justify-center font-bold outline-3 outline-amber-300 overflow-hidden relative">
             <Image 

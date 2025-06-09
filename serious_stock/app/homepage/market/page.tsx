@@ -85,11 +85,14 @@ export default function Page() {
         <div className="text-2xl font-bold text-amber-500 border-b flex flex-1 mb-5">
           Recommend Stock
         </div>
-        <div className="flex flex-1 gap-2">
-          <RecommendCard quote="AAPL" />
-          <RecommendCard quote="TSLA" />
-          <RecommendCard quote="MSFT" />
-          <RecommendCard quote="NVDA" />
+        <div className="flex flex-1 gap-2 ">
+          <div className="grid md:grid-cols-4 gap-4 grid-cols-2">
+            <RecommendCard quote="AAPL" />
+            <RecommendCard quote="TSLA" />
+            <RecommendCard quote="MSFT" />
+            <RecommendCard quote="NVDA" />
+          </div>
+         
         </div>
       </div>
       <div className="flex flex-1 flex-col bg-white p-4 rounded-lg shadow-lg">
