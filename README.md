@@ -10,6 +10,7 @@ function
   - print receipt (dont have now)
   - pay by stripe  (dont have now)
   - upload file to cloudinary
+  - responsive web design 
 - admin (dont have now)
   - approve consultant
   - approve port
