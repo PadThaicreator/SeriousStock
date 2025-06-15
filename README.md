@@ -1,5 +1,24 @@
 # SeriousStock
 
+Front-end
+  - Next.js
+  - Tailwind
+  - Chart.js
+  - Lucide React
+  - Axios
+  - WebSocket
+
+Backend
+  - Node.js
+  - Prisma ORM
+  - Express
+  - WebSocket
+  - Cors
+  - Yahoo Financial Api
+
+Database
+  - MongoDB
+
 Stakeholders
 - admin
 - user
