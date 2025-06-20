@@ -1,5 +1,24 @@
 # SeriousStock
 
+Front-end
+  - Next.js
+  - Tailwind
+  - Chart.js
+  - Lucide React
+  - Axios
+  - WebSocket
+
+Backend
+  - Node.js
+  - Prisma ORM
+  - Express
+  - WebSocket
+  - Cors
+  - Yahoo Financial Api
+
+Database
+  - MongoDB
+
 Stakeholders
 - admin
 - user
@@ -10,7 +29,8 @@ function
   - print receipt (dont have now)
   - pay by stripe  (dont have now)
   - upload file to cloudinary
-- admin (dont have now)
+  - responsive web design 
+- admin //coming soon
   - approve consultant
   - approve port
   - approve account
