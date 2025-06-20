@@ -104,9 +104,9 @@ export default function Page() {
     }
   };
   return (
-    <div className="flex flex-1 flex-col gap-6 bg-gray-50 p-6 border">
+    <div className="flex flex-1 flex-col gap-6 bg-gray-50 md:p-6 p-2 w-full  h-full">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">My Portfolios</h1>
+        <h1 className="md:text-3xl text-xl font-bold text-gray-800">My Portfolios</h1>
         <div className="flex items-center gap-4">
           <button
             className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg transition-colors"
@@ -118,7 +118,7 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col bg-white shadow-lg rounded-xl overflow-hidden ">
+      <div className="flex  flex-col bg-white shadow-lg rounded-xl overflow-hidden ">
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 ">
           <div className="flex items-center gap-2">
             <BarChart2 className="text-amber-500" size={24} />
@@ -131,7 +131,7 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+        <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
           {port.map((item : itemProps)=>(
             <PortDashboard key={item.id}
             name={item.name}

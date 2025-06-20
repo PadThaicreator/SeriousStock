@@ -72,9 +72,9 @@ export default function Sidebar() {
   
         
   return (
-    <div className="flex flex-1 md:h-screen md:gap-2 gap-15  top-0 sticky bg-gradient-to-b from-amber-100 to-amber-200 md:flex-col shadow-lg ">
+    <div className="flex flex-1  flex-col md:h-screen  sticky    md:gap-15   top-0  bg-gradient-to-b from-amber-100 to-amber-200 md:flex-col shadow-lg ">
      
-      <div className="flex items-center justify-center p-4 border-b border-amber-300">
+      <div className="flex items-center justify-center p-4 border-b border-amber-300" >
         <h1 className="text-center text-xl font-bold flex items-center justify-center text-amber-800">
           <TrendingUp className="mr-2 text-amber-600" size={20} />
           Serious Stock
@@ -82,7 +82,7 @@ export default function Sidebar() {
       </div>
       
    
-      <div className="flex-1 px-3 md:py-6 py-2  md:block ">
+      <div className="flex-1 px-3 md:py-6 py-2  md:block  ">
         <nav className="items-center flex md:flex-col ">
           <button className="sidebtn" onClick={()=>router.push("/homepage/home")}>
             <Home size={18} className="mr-3" />

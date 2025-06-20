@@ -2,15 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect  } from "react";
+import { useState, useEffect } from "react";
 import { Calendar, Clock, User } from "lucide-react";
 import { fetchApi } from "@/utility/useApi";
 import { config } from "@/app/config";
 import LoadingPage from "@/utility/loading";
 import { useRouter } from "next/navigation";
 import NewsModal from "../news/newsDetail";
-
-
 
 interface NewsCardProps {
   title: string;
@@ -42,8 +40,6 @@ interface sourceProps {
   name: string;
 }
 
-
-
 export const NewsSection = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -54,7 +50,7 @@ export const NewsSection = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        if(!config.apiGetNews) return;
+        if (!config.apiGetNews) return;
         const res = await fetchApi(config.apiGetNews);
         if (res) {
           const sorted = res.articles.sort((a: any, b: any) =>
@@ -82,49 +78,48 @@ export const NewsSection = () => {
   };
 
   return (
-    
-      <div className="flex flex-col mt-10 mb-16">
-        <div className="flex items-center justify-between mb-6 border-b ">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800">
-              Investment News
-            </h2>
-          </div>
-          <div>
-            <h2
-              className="text-blue-500  cursor-pointer"
-              onClick={handleToAllNews}
-            >
-              See all
-            </h2>
-          </div>
+    <div className="flex flex-col mt-10 mb-16">
+      <div className="flex items-center justify-between mb-6 border-b ">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Investment News</h2>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {news.slice(0, 4).map((item: itemProps, index) => (
-            <NewsCard
-              key={index}
-              title={item.title}
-              author={item.author}
-              date={item.publishedAt}
-              image={item.urlToImage}
-              category={item.source.name}
-              description={item.description}
-              url={item.url}
-              content={item.content}
-              setIsOpen={setIsOpen}
-              setSelectedNews={setSelectedNews}
-            />
-          ))}
+        <div>
+          <h2
+            className="text-blue-500  cursor-pointer"
+            onClick={handleToAllNews}
+          >
+            See all
+          </h2>
         </div>
-        <NewsModal isOpen={isOpen} setIsOpen={setIsOpen} selectedNews={selectedNews} />
       </div>
-  
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {news.slice(0, 4).map((item: itemProps, index) => (
+          <NewsCard
+            key={index}
+            title={item.title}
+            author={item.author}
+            date={item.publishedAt}
+            image={item.urlToImage}
+            category={item.source.name}
+            description={item.description}
+            url={item.url}
+            content={item.content}
+            setIsOpen={setIsOpen}
+            setSelectedNews={setSelectedNews}
+          />
+        ))}
+      </div>
+      <NewsModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        selectedNews={selectedNews}
+      />
+    </div>
   );
 };
 
-export const NewsCard = (prop : NewsCardProps) => {
-  
+export const NewsCard = (prop: NewsCardProps) => {
   const {
     title,
     author,
@@ -134,8 +129,8 @@ export const NewsCard = (prop : NewsCardProps) => {
     description,
     url,
     content,
-    setIsOpen, 
-    setSelectedNews
+    setIsOpen,
+    setSelectedNews,
   } = prop;
   // Format date to be more readable
   const formatDate = (dateString: string) => {
@@ -171,12 +166,12 @@ export const NewsCard = (prop : NewsCardProps) => {
 
   return (
     <div
-      className="flex flex-col bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100"
+      className="flex flex-wrap  flex-col flex-1 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100"
       onClick={handleOpenModal}
     >
-      <div className="relative">
+      <div className="flex ">
         <img src={image} alt={title} className="w-full h-48 object-cover" />
-        <div className="absolute top-3 right-3 bg-red-400 text-white text-xs font-medium px-2 py-1 rounded">
+        <div className="absolute m-2 z-0 bg-red-400 text-white text-xs font-medium px-2 py-1 rounded">
           {category}
         </div>
       </div>

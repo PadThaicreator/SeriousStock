@@ -22,7 +22,7 @@ export default function Page() {
   const [consult, setConsult] = useState([]);
   const [selectedConsultant, setSelectedConsultant] = useState<string>("");
   const [detail, setDetail] = useState<any>();
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState("/image/noImage.png");
   const [loading, setLoading] = useState<boolean>(false);
   const [isRequestSent, setIsRequestSent] = useState<any>("Send Request");
   const user = useSelector((state: any) => state?.user?.user);
@@ -56,13 +56,15 @@ export default function Page() {
   };
 
   useEffect(() => {
-    if (detail) {
+    if (detail?.profile) {
       const cld = new Cloudinary({ cloud: { cloudName: "dlsd9groz" } });
       const img = cld.image(detail?.profile);
       console.log("DEta");
       console.log(detail);
       const imgUrl = img.toURL() + `?t=${Date.now()}`;
       setUrl(imgUrl);
+    }else{
+      setUrl("/image/noImage.png");
     }
   }, [detail]);
 
@@ -77,15 +79,11 @@ export default function Page() {
     // }))
   }, []);
 
- 
-
   useEffect(() => {
     if (!selectedConsultant) return;
     fetchConDetail();
     console.log("Selected Consultant ID:", selectedConsultant);
   }, [selectedConsultant]);
-
-  
 
   if (loading) {
     return <LoadingPage />;
@@ -100,7 +98,7 @@ export default function Page() {
       receiverId: selectedConsultant,
     });
     fetchConDetail();
-    alert(selectedConsultant)
+    alert(selectedConsultant);
   };
 
   return (
@@ -203,14 +201,26 @@ export default function Page() {
 
 const ConsultantCard = (prop: any) => {
   const { consultant, setSelectedConsultant } = prop;
-  const [url, setUrl] = useState<string | null>(null);
+  const [url, setUrl] = useState<string>("");
 
   useEffect(() => {
-    const cld = new Cloudinary({ cloud: { cloudName: "dlsd9groz" } });
-    const img = cld.image(consultant.profile);
-    const imgUrl = img.toURL() + `?t=${Date.now()}`;
-    setUrl(imgUrl);
+    if (consultant && consultant.profile) {
+      const cld = new Cloudinary({ cloud: { cloudName: "dlsd9groz" } });
+      const img = cld.image(consultant.profile);
+      const rawUrl = img.toURL();
+
+      if (rawUrl && (rawUrl.startsWith("http") || rawUrl.startsWith("/"))) {
+        const imgUrl = rawUrl + `?t=${Date.now()}`;
+        setUrl(imgUrl);
+      } else {
+        console.warn("Invalid image URL:", rawUrl);
+        setUrl("/image/noImage.png");
+      }
+    } else {
+      setUrl("/image/noImage.png");
+    }
   }, [consultant]);
+
   return (
     <div
       className=" flex flex-col p-6  rounded-lg shadow-lg hover:shadow-amber-200 hover:text-amber-500 bg-white  transition-colors duration-200 cursor-pointer border-t-4 border-amber-300"
@@ -224,7 +234,7 @@ const ConsultantCard = (prop: any) => {
           alt=""
           width={150}
           height={150}
-          className="w-full h-full object-cover hover:scale-110 transition-transform duration-200 "
+          className="w-full h-full object-cover hover:scale-110 transition-transform duration-200"
         />
       </div>
       <div className="flex flex-col items-center mt-4">
@@ -278,7 +288,6 @@ const PortCard = (prop: any) => {
     </div>
   );
 };
-
 
 const QuoteCard = (prop: any) => {
   const { quote, order } = prop;
@@ -366,7 +375,11 @@ const QuoteCard = (prop: any) => {
           </div>
           <div>
             <div>Current Price </div>
-            <div>{((presentPrice?.regularMarketPrice * quote?.amountQuote).toFixed(2)).toString()}</div>
+            <div>
+              {(presentPrice?.regularMarketPrice * quote?.amountQuote)
+                .toFixed(2)
+                .toString()}
+            </div>
           </div>
         </div>
         <div

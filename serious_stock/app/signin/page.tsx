@@ -44,7 +44,7 @@ export default function Page() {
   };
   return (
     <LoginPage>
-      <div className="flex flex-1 flex-col  justify-center gap-2">
+      <div className="flex flex-1 flex-col  justify-center gap-2 ">
         <div className="flex   flex-col">
           <label className="block mb-1 font-semibold">Username</label>
           <input

@@ -66,7 +66,7 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col flex-1 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         {friendList.map((item : any, i) => {
           const friend = item.friend.find((id  : string) => id !== user.id);
           return <FriendCard id={friend} key={i} ownerId={user.id} />
