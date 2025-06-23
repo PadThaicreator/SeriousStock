@@ -84,7 +84,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-1 bg-gray-100 rounded-lg p-4 flex-col">
-      <div className=" rounded-lg shadow-lg ">
+      <div className="flex flex-1 flex-col rounded-lg shadow-lg ">
         <div className="flex flex-1 p-4 border-b ">
           <HeaderChat head={nameCh} />
         </div>
@@ -284,7 +284,7 @@ const MessageZone = (prop: any) => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
   return (
-    <div className="flex flex-1 h-85 3xl:h-150  flex-col overflow-y-auto gap-1 ">
+    <div className="flex flex-1 h-85 3xl:h-150 w-full flex-col overflow-y-auto gap-1 ">
       {messages?.map((item : any, index : any) => (
         <div
           key={index}

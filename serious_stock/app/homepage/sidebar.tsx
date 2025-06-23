@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { TrendingUp, Home, PieChart, BarChart2, LogOut, BookUser, Newspaper, User } from 'lucide-react';
+import { TrendingUp, Home, PieChart, BarChart2, LogOut, BookUser, Newspaper, User, ReceiptText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 
@@ -123,6 +123,11 @@ export default function Sidebar() {
                 {reqFriend}
               </span>
             )}
+          </button>
+          <button className="sidebtn" onClick={()=>router.push("/homepage/order")}>
+            <ReceiptText size={18} className="mr-3" />
+             
+             <p className='md:block hidden'>All Receipts</p>
           </button>
         </nav>
       </div>

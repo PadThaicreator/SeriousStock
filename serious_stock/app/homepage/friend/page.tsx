@@ -43,9 +43,9 @@ export default function Page() {
 
   return (
     <div className="flex flex-1 flex-col bg-white p-4">
-      <div className=" flex flex-row justify-between">
-        <div className="flex gap-2 items-center justify-center text-amber-500">
-          <MessagesSquare size={20} />
+      <div className=" flex flex-row justify-between mb-3">
+        <div className="flex gap-2 items-center justify-center text-amber-500 text-xl">
+          <MessagesSquare size={24} />
           Friend
         </div>
         <div className="flex items-center justify-center gap-3 ">
@@ -53,7 +53,7 @@ export default function Page() {
             className="flex flex-row items-center justify-center gap-2 hover:bg-gray-200 rounded-md p-2 cursor-pointer"
             onClick={() => setCreate(!isCreate)}
           >
-            <CirclePlus size={18} /> Create Chat
+            {/* <CirclePlus size={18} /> Create Chat */}
           </div>
           <div
             className={`${
@@ -111,6 +111,7 @@ const FriendCard = ( prop : any ) =>{
       const img = cld.image(user?.profile);
       const imgUrl = img.toURL() + `?t=${Date.now()}`;
       setUrl(imgUrl);
+      
     }
   }, [user]);
 
@@ -131,7 +132,7 @@ const FriendCard = ( prop : any ) =>{
       <div className="flex flex-1 items-center gap-4">
         <div className="w-24 h-24 rounded-full overflow-hidden">
           { url && <Image
-            src={url}
+            src={ url ||"/public/image/noImage.png"}
             width={150}
             height={150}
             alt="profile"

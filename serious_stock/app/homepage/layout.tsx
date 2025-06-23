@@ -32,7 +32,7 @@ export default function Layout ({children} : {children : React.ReactNode}){
             </div>
             <div className="md:p-4  bg-amber-50   flex flex-5  flex-col ">
             
-                <div className="bg-amber-100 md:p-5 md:rounded-lg md:shadow-lg shadow-gray-500 flex flex-1  border-amber-300 border-2 ">
+                <div className="bg-amber-100  md:p-5 md:rounded-lg md:shadow-lg shadow-gray-500 flex flex-1  border-amber-300 border-2 ">
                     {children}
                 </div>
                 

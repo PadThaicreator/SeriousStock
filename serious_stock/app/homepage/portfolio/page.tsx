@@ -12,6 +12,7 @@ import {
   Save,
   ChevronDown,
   ChevronUp,
+  Layers,
   
 } from "lucide-react";
 import Modal from "@/utility/modal";
@@ -126,9 +127,7 @@ export default function Page() {
               Portfolio Overview
             </h2>
           </div>
-          <div className="text-sm font-medium text-gray-500">
-            Last updated: April 25, 2025
-          </div>
+          
         </div>
 
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
@@ -400,8 +399,8 @@ const PortCard = (prop : any) => {
         <div>{port.name}</div>
         <div>{port.reason}</div>
         <div className="flex gap-2 items-center justify-center">
-          <TrendingUp />
-          <div>2.5%</div>
+          <Layers />
+          
           {!showDetail && (<ChevronDown
             className="cursor-pointer hover:bg-gray-300 rounded-full p-2 "
             size={32}
@@ -437,7 +436,7 @@ const PortDetail = (prop: PortDetailProps) => {
       {port.QuoteInPort.map((item : any)=>(
         <QuoteCard key={item.id}  quote={item} port={port}/>
       ))}
-      <button onClick={handleCloseDetail}>Close</button>
+      <button className="btn items-center justify-center" onClick={handleCloseDetail}><p>Close</p></button>
     </div>
   );
 };

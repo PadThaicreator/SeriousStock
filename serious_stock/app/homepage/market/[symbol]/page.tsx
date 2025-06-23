@@ -43,7 +43,7 @@ export default function Page() {
   const [isSelected , setSelect] = useState<string>("")
   const fetchPrice = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const res = await axios.get(
         `${config.apiBackend}/quote/getPrice/${symbol}`,
         {
@@ -62,7 +62,7 @@ export default function Page() {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
   useEffect(() => {
@@ -84,9 +84,9 @@ export default function Page() {
   }, [dataPrice]);
 
 
-  if(loading){
-    return <LoadingPage />
-  }
+  // if(loading){
+  //   return <LoadingPage />
+  // }
   
   const startPrice = data[0] || 0;
   const endPrice = data[data.length - 1] || 0;

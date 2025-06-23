@@ -54,5 +54,42 @@ export const OrderController = {
             res.status(500).json({ error: error.message });
             console.log(error)
         }
+    },
+    getOrder : async (req , res) =>{
+        try {
+            
+            const userId = req.params.id;
+            const port = await prisma.portfolio.findMany({
+                where : {userId : userId}
+            })
+
+            const orders = await prisma.order.findMany({
+                where : { portId : { in : port.map(p => p.id) }},
+                include : {
+                    quote : true,
+                    portfolio : true
+                }
+                
+            })
+
+            res.json(orders);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+            console.log(error)     
+        }
+    },
+    getAll : async (req , res ) =>{
+        try {
+            const orders = await prisma.order.findMany({
+                include : {
+                    quote : true,
+                    portfolio : true
+                }
+            })
+            res.json(orders);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+            console.log(error)     
+        }
     }
 }

@@ -10,6 +10,21 @@ dotenv.config();
 export const SellController = {
   create: async (req, res) => {
     try {
+      
+
+      const quote = await prisma.quoteInPort.findFirst({where : { portId: req.body.portId , quoteId: req.body.quoteId}})
+
+      if(!quote){
+        res.status(404)
+      }
+      console.log("BE")
+      await prisma.quoteInPort.update({
+        where : { id: quote.id },
+        data : {
+            amountQuote : Math.abs(quote.amountQuote-req.body.amountSell)
+        }
+      })
+      console.log("AF")
       await prisma.sellOrder.create({
         data: {
           createdAt: new Date(),
@@ -21,23 +36,30 @@ export const SellController = {
           createdAt : new Date()
         },
       });
-
-      const quote = await prisma.quoteInPort.findFirst({where : { portId: req.body.portId , quoteId: req.body.quoteId}})
-
-      if(!quote){
-        res.status(404)
-      }
-      
-      await prisma.quoteInPort.update({
-        where : { id: quote.id },
-        data : {
-            amountQuote : Math.abs(quote.amountQuote-req.body.amountSell)
-        }
-      })
       res.json("create success");
     } catch (error) {
         console.log(error)
       res.status(500).json({ error: error.message });
     }
   },
+  getSellOrder : async (req , res) =>{
+        try {
+            
+            const userId = req.params.id;
+
+            const orders = await prisma.sellOrder.findMany({
+                where : { userId : userId},
+                include : {
+                    quote : true,
+                    portfolio : true
+                }
+                
+            })
+
+            res.json(orders);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+            console.log(error)     
+        }
+    },
 };

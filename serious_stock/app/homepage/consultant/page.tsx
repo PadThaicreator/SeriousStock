@@ -103,11 +103,11 @@ export default function Page() {
 
   return (
     <div className="flex flex-1 bg-white flex-col gap-5 p-4">
-      <div className="flex flex-col  p-2 gap-2">
+      <div className="flex flex-col  p-2 gap-2 ">
         <div className="flex flex-1 p-4  bg-gradient-to-r from-amber-400 via-orange-400 to-amber-200 text-xl font-semibold text-white rounded-lg">
           Our Consultant
         </div>
-        <div className="flex gap-4 overflow-y-auto flex-wrap mb-4 p-2">
+        <div className="flex flex-col md:flex-row gap-4 overflow-y-auto mb-4 p- items-center justify-center md:items-start md:justify-start">
           {consult.map((item, index) => (
             <ConsultantCard
               key={index}
@@ -223,7 +223,7 @@ const ConsultantCard = (prop: any) => {
 
   return (
     <div
-      className=" flex flex-col p-6  rounded-lg shadow-lg hover:shadow-amber-200 hover:text-amber-500 bg-white  transition-colors duration-200 cursor-pointer border-t-4 border-amber-300"
+      className=" flex flex-col p-6  rounded-lg shadow-md hover:shadow-amber-200 hover:text-amber-500 bg-white  transition-colors duration-200 cursor-pointer border-t-4 border-amber-300 mb-1"
       onClick={() => {
         setSelectedConsultant(consultant.id);
       }}

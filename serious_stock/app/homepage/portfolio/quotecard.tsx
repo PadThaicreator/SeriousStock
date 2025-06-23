@@ -111,7 +111,7 @@ const QuoteCard = (prop: any) => {
           
           <div className="mt-4 text-sm">
             <span className="text-gray-500">Holdings:</span>
-            <span className="ml-2 font-medium text-gray-700">{quote.amountQuote} shares</span>
+            <span className="ml-2 font-medium text-gray-700">{quote.amountQuote.toFixed(2)} shares</span>
           </div>
         </div>
         

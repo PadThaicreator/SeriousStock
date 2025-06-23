@@ -1,5 +1,5 @@
 export const config = {
-    apiBackend : "https://seriousstock-production-dcef.up.railway.app",
+    apiBackend : process.env.NEXT_PUBLIC_API_BACKEND,
     apilgetQoute : "https://finnhub.io/api/v1/stock/profile2?symbol=",
     apigetAllQoute : "https://finnhub.io/api/v1/stock/symbol?exchange=US&token=cvvs11hr01qod00lrpj0cvvs11hr01qod00lrpjg",
     apigetPriceQoute : "https://finnhub.io/api/v1/quote?symbol=",
