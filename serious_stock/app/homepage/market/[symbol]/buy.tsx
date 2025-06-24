@@ -5,62 +5,38 @@ import { config } from "@/app/config";
 import Modal from "@/utility/modal";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+
 import Swal from "sweetalert2";
 interface itemProps {
   id: string;
   name: string;
 }
 export default function Buy(prop: any) {
-  const { quote } = prop;
+  const { quote  , quoteId , port , fetchData } = prop;
   const [isOpen, setOpen] = useState(false);
-  const [port, setPort] = useState<any>([]);
+
   const [portId, setPortId] = useState("");
-  const [quoteId, setQuoteId] = useState("No");
+
   const [priceQuote, setPriceQuote] = useState(0);
   const [amountQuote, setAmountQuote] = useState(1);
   const [priceToPay, setPriceToPay] = useState(0);
 
-  const { user } = useSelector((state: any) => state.user);
+
 
   const handleClose = () => {
     clearForm();
     setOpen(false);
   };
 
-  const fetchData = async () => {
-    try {
-      const detail = await axios.get(
-        `${config.apiBackend}/quote/get/${quote.symbol}`
-      );
-      const port = await axios.get(`${config.apiBackend}/user/port/${user.id}`);
-      if (port) {
-        setPort(port.data?.portfolio);
-      }
+  
 
-      if (detail) {
-        setQuoteId(detail.data?.id);
-      }
-    } catch (error: any) {
-      console.log(error);
-      Swal.fire({
-        title: "Error!",
-        text: error.message,
-        icon: "warning",
-        timer: 2000,
-      });
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [quote]);
+  
 
   useEffect(() => {
     setPortId(port[0]?.id);
     setPriceQuote(quote.regularMarketPrice);
     setPriceToPay(quote.regularMarketPrice);
-  }, [port, quote, quoteId]);
+  }, [port, quote, quoteId ]);
 
   const handleSave = async () => {
     try {
@@ -76,6 +52,7 @@ export default function Buy(prop: any) {
         payload
       );
       console.log(res);
+      fetchData();
       handleClose();
       Swal.fire({
         title: "Buy Success!",

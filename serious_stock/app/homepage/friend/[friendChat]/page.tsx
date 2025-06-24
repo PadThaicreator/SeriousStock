@@ -37,7 +37,7 @@ export default function Page() {
   const [nameCh, setNameCh] = useState();
   const [messages, setMessages] = useState<Message[]>([]);
   const id = params.friendChat;
-
+  const [image, setImage] = useState<string[]>([]);
 
 
   const fetchChannel = async () => {
@@ -85,14 +85,14 @@ export default function Page() {
   return (
     <div className="flex flex-1 bg-gray-100 rounded-lg p-4 flex-col">
       <div className="flex flex-1 flex-col rounded-lg shadow-lg ">
-        <div className="flex flex-1 p-4 border-b ">
+        <div className="flex  p-4 border-b ">
           <HeaderChat head={nameCh} />
         </div>
-        <div className="flex flex-2 p-2  ">
-          <MessageZone messages={messages} user={user}  />
+        <div className="flex  p-2   ">
+          <MessageZone messages={messages} user={user}  image={image}/>
         </div>
-        <div className="flex flex-1 p-2  ">
-          <TypingZone chId={id}  user={user} />
+        <div className="flex  p-2  ">
+          <TypingZone chId={id}  user={user} setImage={setImage} image={image}/>
         </div>
       </div>
     </div>
@@ -115,7 +115,7 @@ const HeaderChat = (prop: any) => {
   }, [head]);
 
   return (
-    <div className="flex flex-1 flex-row items-center gap-4 ">
+    <div className="flex  flex-row items-center gap-4 ">
       <ArrowLeft
         size={28}
         className="hover:bg-gray-200 rounded-full p-1 cursor-pointer"
@@ -142,10 +142,10 @@ const HeaderChat = (prop: any) => {
 };
 
 const TypingZone = (prop: any) => {
-  const { chId, user } = prop;
+  const { chId, user , setImage , image } = prop;
   const [text, setText] = useState<string>("");
   const [file, setFile] = useState<any>([]);
-  const [image, setImage] = useState<string[]>([]);
+  
 
   const handleSend = async () => {
     try {
@@ -207,7 +207,7 @@ const TypingZone = (prop: any) => {
           image.length > 0 ? "h-40 overflow-x-auto" : ""
         }`}
       >
-        {image.map((src, index) => (
+        {image.map((src : any, index : any) => (
           <div key={index} className="relative inline-block">
             <X
               size={20}
@@ -278,13 +278,13 @@ const TypingZone = (prop: any) => {
 };
 
 const MessageZone = (prop: any) => {
-  const { messages, user } = prop;
+  const { messages, user , image} = prop;
   const bottomRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
   return (
-    <div className="flex flex-1 h-85 3xl:h-150 w-full flex-col overflow-y-auto gap-1 ">
+    <div className={`flex  h-85 ${image.length > 0 ? "md:h-40" : "2xl:h-140"} w-full flex-col overflow-y-auto gap-1 `}>
       {messages?.map((item : any, index : any) => (
         <div
           key={index}
@@ -292,7 +292,7 @@ const MessageZone = (prop: any) => {
             user.id == item.senderId ? "justify-end" : ""
           }`}
         >
-          <div className="  rounded-lg p-2 px-4 bg-blue-300">
+          <div className="  rounded-lg p-2 px-4 bg-blue-300  2xl:bg-amber-300 ">
             <div>{item.content}</div>
             <div className="flex gap-4">
               {item?.file?.map((img : string, idx : any) => (

@@ -28,8 +28,10 @@ import { Filler } from "chart.js";
 import DetailQuote from "./DetailQuote";
 import Sell from "./sell";
 import Buy from "./buy";
-import LoadingPage from "@/utility/loading";
+
 import MyLineChart from "./component/chart";
+import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
 ChartJS.register(Filler);
 
 export default function Page() {
@@ -37,7 +39,7 @@ export default function Page() {
   const symbol = params.symbol;
 
   const [dataPrice, setDataPrice] = useState([]);
-  const [loading, setLoading] = useState(false);
+ 
   const [quote, setQuote] = useState<any>({});
   const [day ,setDay] = useState(30)
   const [isSelected , setSelect] = useState<string>("")
@@ -65,9 +67,57 @@ export default function Page() {
       // setLoading(false);
     }
   };
+
+   const [quoteId, setQuoteId] = useState("");
+   const [port, setPort] = useState<any>([]);
+     const { user } = useSelector((state: any) => state.user);
+    const fetchData = async () => {
+    try {
+      const detail = await axios.get(
+        `${config.apiBackend}/quote/get/${quote.symbol}`
+      );
+      const port = await axios.get(`${config.apiBackend}/user/port/${user.id}`);
+      if (port) {
+        setPort(port.data?.portfolio);
+      }
+
+      if (detail) {
+        setQuoteId(detail.data?.id);
+      }
+    } catch (error: any) {
+      console.log(error);
+      Swal.fire({
+        title: "Error!",
+        text: error.message,
+        icon: "warning",
+        timer: 2000,
+      });
+    }
+  };
+  const portId = port[0]?.id 
+  const [quotePort, setQuotePort] = useState<any>();
+
+   const fetchQuote = async () => {
+    try {
+      const res = await axios.get(
+        `${config.apiBackend}/port/quote/${portId}`
+      );
+      if (res) {
+        setQuotePort(res.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   useEffect(() => {
     fetchPrice();
   }, [day]);
+  useEffect(() =>{
+    fetchData();
+    fetchQuote();
+  })
 
   const [labels, setLable] = useState<string[]>([]);
   const [data, setData] = useState<number[]>([]);
@@ -127,8 +177,8 @@ export default function Page() {
 
       <DetailQuote quote={quote} symbol={symbol}/>
       <div className="grid grid-cols-2  m-2 gap-4">
-              <Buy  quote={quote}/>
-              <Sell  quote={quote}/>
+              <Buy  quote={quote} quoteId={quoteId} port={port} fetchData={fetchData}/>
+              <Sell  quote={quote} quoteId={quoteId} port={port} fetchData={fetchData} fetchQuote={fetchQuote} quotePort={quotePort}/>
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import { v2 as cloudinary } from "cloudinary";
+
 import dotenv from "dotenv";
 import multer from "multer";
 import streamifier from "streamifier";
 import fs from "fs";
-
+import { v2 as cloudinary } from "cloudinary";
 dotenv.config();
 const prisma = new PrismaClient();
 
@@ -41,6 +41,7 @@ export const FileController = {
       };
 
       const uploadResult = await streamUpload(file.buffer);
+      console.log("Upload result:", uploadResult);
 
       // Optionally save to DB
       // await prisma.upload.create({

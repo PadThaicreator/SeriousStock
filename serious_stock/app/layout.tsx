@@ -1,4 +1,3 @@
-// NO "use client" here!
 
 
 import { Geist, Geist_Mono } from "next/font/google";
@@ -17,7 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Your App Title", // if not already defined in a separate file
+  title: "Your App Title", 
+  content: "width=device-width, initial-scale=1.0"
 };
 
 export default function RootLayout({

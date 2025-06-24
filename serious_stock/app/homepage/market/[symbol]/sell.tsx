@@ -15,63 +15,28 @@ interface itemProps {
 }
 
 export default function Sell(prop: any) {
-  const { quote } = prop;
+  const { quote , quoteId , port , fetchData ,fetchQuote , quotePort } = prop;
   const [isOpen, setOpen] = useState(false);
-  const [quotePort, setQuotePort] = useState<any>();
-  const [port, setPort] = useState<any>([]);
+  
+  
   const [portId, setPortId] = useState<string>();
   const [amountQuote, setAmountQuote] = useState<number>(1);
   const [want, setWant] = useState("");
-  const [quoteId, setQuoteId] = useState("");
+ 
   const [amountSell, setAmountSell] = useState<number>(1);
   const [priceSell, setPriceSell] = useState<number>();
 
   const { user } = useSelector((state: any) => state.user);
 
-  const fetchData = async () => {
-    try {
-      const detail = await axios.get(
-        `${config.apiBackend}/quote/get/${quote.symbol}`
-      );
-      const port = await axios.get(`${config.apiBackend}/user/port/${user.id}`);
-      if (port) {
-        setPort(port.data?.portfolio);
-      }
 
-      if (detail) {
-        setQuoteId(detail.data?.id);
-      }
-    } catch (error: any) {
-      console.log(error);
-      Swal.fire({
-        title: "Error!",
-        text: error.message,
-        icon: "warning",
-        timer: 2000,
-      });
-    }
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, [quote]);
+  
 
   useEffect(() => {
     setPortId(port[0]?.id);
   }, [port]);
 
-  const fetchQuote = async () => {
-    try {
-      const res = await axios.get(
-        `${config.apiBackend}/port/quote/${portId}`
-      );
-      if (res) {
-        setQuotePort(res.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+ 
 
   useEffect(() => {
     
@@ -88,6 +53,7 @@ export default function Sell(prop: any) {
       if (data) {
         console.log(data);
         setAmountQuote(data?.amountQuote || 0);
+        setPriceSell(data?.amountQuote * quote.regularMarketPrice);
       }
     }
   }, [quotePort, quoteId, portId]);
