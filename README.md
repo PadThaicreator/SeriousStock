@@ -7,6 +7,7 @@ Front-end
   - Lucide React
   - Axios
   - WebSocket
+  - SweetAlert2
 
 Backend
   - Node.js
