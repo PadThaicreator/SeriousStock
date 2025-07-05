@@ -30,7 +30,7 @@ function
   - print receipt (dont have now)
   - pay by stripe  (dont have now)
   - upload file to cloudinary
-  - responsive web design 
+  - responsive web design (dont have now)
 - admin //coming soon
   - approve consultant
   - approve port
