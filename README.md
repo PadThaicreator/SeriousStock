@@ -21,25 +21,14 @@ Database
   - MongoDB
 
 Stakeholders
-- admin
+
 - user
 - consultant
 
 function
-- system. //coming soon
-  - print receipt (dont have now)
-  - pay by stripe  (dont have now)
-  - upload file to cloudinary
-  - responsive web design (dont have now)
-- admin //coming soon
-  - approve consultant
-  - approve port
-  - approve account
-  - approve order
 - user
   - see quote news
   - buy sell quote
-  - compare quote. (dont have now)
   - open port
   - request consultant
   - chat with consultant
@@ -47,9 +36,6 @@ function
 - consultant
   - same user
   - chat with user 
-  - recommend quote to user (dont have now)
-
-
 
 
 --Poonnawit Poosakul--
