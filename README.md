@@ -10,11 +10,9 @@ Front-end
   - SweetAlert2
 
 Backend
-  - Node.js
   - Prisma ORM
   - Express
   - WebSocket
-  - Cors
   - Yahoo Financial Api
 
 Database
