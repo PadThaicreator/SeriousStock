@@ -14,12 +14,12 @@ export default function (io) {
     });
 
     socket.on('private-message', async ({ senderId, receiverId, message }) => {
-      // บันทึกข้อความลง DB
+      
       await prisma.message.create({
         data: { senderId, receiverId, content: message }
       });
 
-      // ส่งข้อความให้ผู้รับ
+      
       io.to(receiverId).emit('private-message', { senderId, message });
     });
 

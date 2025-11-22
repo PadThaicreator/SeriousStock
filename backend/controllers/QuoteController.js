@@ -59,7 +59,7 @@ export const QuoteController = {
 
       res.json(result);
     } catch (err) {
-      console.error("🔥 ERROR:", err);
+      console.error(" ERROR:", err);
       res
         .status(500)
         .json({ error: "Failed to fetch stock data", message: err.message });
